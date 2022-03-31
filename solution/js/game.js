@@ -39,11 +39,11 @@ Game.prototype.inRoom = function({x,y}) {
    return this.rooms.find(r => r.encloses(x,y));
 }
 
-Game.prototype.addPath = function(path, id, src, tileCode) {
+Game.prototype.addPath = function(path) {
  
    for (var y = path.start.y; y <= path.end.y; ++y) {
       for (var x = path.start.x; x <= path.end.x; ++x) {
-         game.map[y][x] = tileCode || FLOOR_CODE;
+         game.map[y][x] = FLOOR_CODE;
       }
    }
 }

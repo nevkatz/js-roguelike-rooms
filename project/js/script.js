@@ -16,11 +16,6 @@ const ENEMY_CODE = 3;
 const POTION_CODE = 4;
 const WEAPON_CODE = 5;
 
-const SPELL_CODE = 6;
-const ITEM_CODE = 7;
-const PATH_CODE = 8;
-const WARP_CODE = 9;
-
 const POTIONS = [10, 20, 30, 40, 50];
 
 // possible health that enemies can have

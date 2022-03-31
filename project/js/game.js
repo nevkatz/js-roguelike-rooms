@@ -34,19 +34,11 @@ Game.prototype.reset = function() {
    this.map = [];
    this.rooms = []
 }
+/**
+ * @TODO: Fill the entire game map with wall tiles.
+ */ 
 Game.prototype.resetMap = function() {
 
-   this.map = [];
-   // generate a solid wall.
-   for (var row = 0; row < ROWS; row++) {
-      // create row
-      this.map.push([]);
-
-      for (var col = 0; col < COLS; col++) {
-         // create wall
-         this.map[row].push(WALL_CODE);
-      }
-   }
 }
 
 /**

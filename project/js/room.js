@@ -88,13 +88,6 @@ Room.prototype.sharesCoordsWith = function(room, coord, min=1) {
  *        the method-calling room or current neighbors.
  */ 
 Room.prototype.findPotentialRooms = function() {
-
-   // there is a better way to instantiate this
-   let rooms = [];
-
-   // filter out method-calling room and its neighbors
-
-   return rooms;
  
 }
 /**
