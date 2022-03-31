@@ -10,7 +10,7 @@ The structure of this project is as follows:
 
 Both versions have identical directory structures.
 
-For guidance, see Nevin's [tutorial](https://nevkatz.medium.com).
+For step-by-step guidance, see Nevin's [tutorial](https://javascript.plainenglish.io/rendering-roguelike-rooms-with-javascript-8a2dc58f3b63) on connecting rooms.
 
 That's about it. Enjoy!
 
