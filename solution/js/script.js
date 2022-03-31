@@ -382,13 +382,9 @@ function generateMapRooms() {
 
       success = room.findFacingRooms(min);
 
-      console.log(`Room${room.id} find facing: ${success}`);
-      console.log(`Room${room.id} facing neighbors: ${room.neighbors.length}`);
-
       // make diagonal-only? 
       success = room.nearestNeighbor();
  
-      console.log(`Room${room.id} nearest neighbor: ${success}`);
    }
    for (var myRoom of game.rooms) {
 
@@ -402,7 +398,6 @@ function printNeighbors() {
    for (var room of game.rooms) {
       let ids = room.neighbors.map(x => x.id);
 
-      console.log(`room${room.id} neighbors: ${ids}`);
    }
 }
 /**

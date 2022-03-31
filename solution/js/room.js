@@ -84,9 +84,8 @@ Room.prototype.findFacingRooms = function(min=1, maxRooms=1) {
          break;
       }
    }
-  // console.log(this.neighbors.length + ' neighbors for ' + this.id + ' after findFacingRooms..');
+ 
    return success;
-   // filter out the closest neighbors
 }
 Room.prototype.searchNeighbors = function(room, arr) {
    for (var room of room.neighbors) {
@@ -118,11 +117,7 @@ Room.prototype.connectRemaining = function() {
       let success = room.nearestNeighbor(connectedRooms);
       //debug
       if (success) {
-         console.log(`** remaining Room${room.id} found a match`)
          numConnected++;
-      }
-      else {
-         console.log(`remaining Room${room.id} could not connect`);
       }
 
     }
@@ -135,7 +130,7 @@ Room.prototype.connectRemaining = function() {
  * 
  */ 
 Room.prototype.overlaps = function(room, tolerance=0) {
-  // console.log(`Room${this.id} overlaps tolerance: ${tolerance}`);
+
    return this.overlapsHoriz(room, tolerance) && this.overlapsVert(room, tolerance);
 }
 
@@ -216,7 +211,7 @@ Room.prototype.connectRoom = function(room, min=3) {
       }
       
    }
-   console.log(`[connectRoom] room${this.id} success: ` + success);
+
    return success;
 }
 
@@ -441,11 +436,7 @@ Room.prototype.placePathX = function(room,path,wall) {
          if (!path.isAdjacentVert(x)) {
                path.allowed = true;
                path.start.x = path.end.x = x;
-               console.log('Room'+this.id+' -- path is good at '+x);
                break;
-         }
-         else {
-              console.log('Room'+this.id+' -- path is bad at '+x);
          }
    }
    return path;
@@ -457,17 +448,12 @@ Room.prototype.placePathY = function(room,path,wall) {
    for (var y = start; y <= end; ++y) {
 
          if (!path.isAdjacentHoriz(y)) {
-              console.log('Room'+this.id+' -- path is good at '+y);
                path.allowed = true;
                path.start.y = path.end.y = y;
                break;
          
          }
-         else {
-            console.log('Room'+this.id+' -- path is bad '+y);
-         }
    }
-   console.log('Room'+this.id+' path y: ' + path.start.y + ' allowed: ' + path.allowed);
 
    return path;
 }
@@ -481,7 +467,7 @@ Room.prototype.addVertPath = function(room, path, wall) {
    path = this.placePathX(room,path,wall);
  
    if (path.allowed) {
-         // console.log('Room '+this.id+' starty : ' + path.start.y + ' end y: ' + path.end.y);
+       
 
           game.addPath(path);
 
@@ -534,10 +520,6 @@ Room.prototype.findPotentialRooms = function() {
    if (this.neighbors.length > 0) {
         rooms = rooms.filter(x => !this.neighbors.includes(x));
    }
-   else {
-      console.log(this.id + ' has no neighbors at this time...');
-   }
-   //console.log(this.id + ' neighbors: '+this.neighbors.map(x => x.id)+' potential rooms: ' + rooms.map(x=>x.id));
    return rooms;
 }
 
@@ -558,9 +540,6 @@ Room.prototype.findNearbyRoom = function(myRoom, rooms) {
             return true;
          }
 
-      }
-      else {
-         console.log(`room between ${myRoom} and ${room}`);
       }
    }
    return false;
@@ -592,7 +571,6 @@ Room.prototype.nearestNeighbor = function(rooms) {
       success = this.connectRoom(room);
 
       if (success) { 
-         console.log('match found for Room' + this.id);
          break;
        }
    }

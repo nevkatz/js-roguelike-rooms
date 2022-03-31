@@ -34,20 +34,6 @@ Game.prototype.reset = function() {
    this.map = [];
    this.rooms = []
 }
-
-Game.prototype.inRoom = function({x,y}) {
-   return this.rooms.find(r => r.encloses(x,y));
-}
-
-Game.prototype.addPath = function(path, id, src, tileCode) {
- 
-   for (var y = path.start.y; y <= path.end.y; ++y) {
-      for (var x = path.start.x; x <= path.end.x; ++x) {
-         game.map[y][x] = tileCode || FLOOR_CODE;
-      }
-   }
-}
-
 Game.prototype.resetMap = function() {
 
    this.map = [];
@@ -62,14 +48,31 @@ Game.prototype.resetMap = function() {
       }
    }
 }
+
+/**
+ * @TODO: Return TRUE if the passed-in coordinate is in at least one room.
+ */ 
+Game.prototype.inRoom = function({x,y}) {
+   
+}
+
+/**
+ * @TODO: Add floor tiles to the 2D game map that correspond
+ *        to the start and end coordinates of th passed-in path.
+ * 
+ * @param {Object} path
+ */ 
+Game.prototype.addPath = function(path) {
+ 
+   
+}
+
+/**
+ * @TODO: Add floor tiles ot the 2D game map that correspond
+ *        to the start and end coordinates of the passed-in room.
+ */ 
 Game.prototype.carveRoom = function(room) {
 
-   for (var y = room.start.y; y <= room.end.y; ++y) {
-      for (var x = room.start.x; x <= room.end.x; ++x) {
-
-         this.map[y][x] = FLOOR_CODE;
-      }
-   }
 }
 
 

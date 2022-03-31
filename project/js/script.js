@@ -374,28 +374,16 @@ function generateMapRooms() {
    for (var i = 0; i < maxRooms; ++i) {
       addRoom();
    }
-   let success = false;
-
-   const min = 3;
-
-   for (var room of game.rooms) {
-
-      success = room.findFacingRooms(min);
-
-      console.log(`Room${room.id} find facing: ${success}`);
-      console.log(`Room${room.id} facing neighbors: ${room.neighbors.length}`);
-
-      // make diagonal-only? 
-      success = room.nearestNeighbor();
- 
-      console.log(`Room${room.id} nearest neighbor: ${success}`);
-   }
-   for (var myRoom of game.rooms) {
-
-     let {numConnected, numDisc} = myRoom.connectRemaining();
-
-     console.log(`Room${room.id} conected ${numConnected} out of ${numDisc} disconnected rooms`);
-   }
+   /**
+    * @TODO: Write logic for creating rooms. 
+    * 
+    * Assuming you are following the tutorial, 
+    * loop through the existing rooms and try calling
+    * 
+    * findFacingRooms
+    * 
+    * 
+    */ 
 }
 
 function printNeighbors() {
