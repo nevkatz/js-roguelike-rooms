@@ -17,59 +17,30 @@ class Room {
       this.neighbors = [];
    }
 }
-
 Room.prototype.overlaps = function(room, wall=0) {
    return this.overlapsHoriz(room, wall) && 
    this.overlapsVert(room, wall);
 }
-
-/**
- *  Horiz overlap
- */ 
 Room.prototype.overlapsHoriz = function(room, wall=0) {
 
    return this.start.x - wall <= room.end.x &&
            this.end.x + wall >= room.start.x;
 }
-
 Room.prototype.overlapsVert = function(room, wall=0) {
 
    return this.start.y - wall <= room.end.y &&
           this.end.y + wall >= room.start.y;
 }
 
-/**
- * 
- * @TODO: Determine whether an x or y coordinate is between a room's
- *        start and end coordinates
- * 
- * @param {Number} c - the x or y coordinate
- * @param {String} prop - either 'x' or 'y'
- */ 
-Room.prototype.contains = function(c, prop) {
-
-}
-/**
- * @TODO: Determine whether a point with coordinates (x,y)
- *        is inside the room
- * 
- * @return {Boolean} if point is in room, true; else, false
- */ 
-Room.prototype.encloses = function(x,y) {
-   return this.contains(x,'x') && this.contains(y,'y');
-}
 
 /**
- * @Tasks start here
- * 
- * Phase 1: Find Facing Rooms
- * 
+ * For a later tutorial
  */ 
 
 
 /**
  * 
- * @TODO: Determine whether the number of x or y coords shared by two 
+ * @LATER Determine whether the number of x or y coords shared by two 
  *        rooms are greater than or equal to the minimum amount.
  *        Return TRUE if enough coords are shared, FALSE if not
  * 
@@ -84,14 +55,14 @@ Room.prototype.sharesCoordsWith = function(room, coord, min=1) {
 
 }
 /**
- * @TODO: Find potential rooms that do not include 
+ * @LATER: Find potential rooms that do not include 
  *        the method-calling room or current neighbors.
  */ 
 Room.prototype.findPotentialRooms = function() {
  
 }
 /**
- * @TODO: Write logic for connecting to one room that is facing the current
+ * @LATER: Write logic for connecting to one room that is facing the current
  * room. For a room to be facing, it should be sharing {min} x or y coordinates
  * and there should be no rooms in between.
  * 
@@ -115,7 +86,7 @@ Room.prototype.findFacingRooms = function(min=1, maxRooms=1) {
 
 
 /**
- *  @TODO: Determine whether method-calling room is
+ *  @LATER: Determine whether method-calling room is
  *         horizontally between room1 and room2
  * 
  * @param {Object} room1
@@ -126,7 +97,7 @@ Room.prototype.betweenHoriz = function(room1,room2) {
 
 }
 /**
- *  @TODO: Determine whether method-calling room is
+ *  @LATER: Determine whether method-calling room is
  *         vertically between room1 and room2
  * 
  * @param {Object} room1
@@ -137,7 +108,7 @@ Room.prototype.betweenVert = function(room1,room2) {
 
 }
 /** 
- *  @TODO: Test whether there are any rooms 
+ *  @LATER: Test whether there are any rooms 
  *         that are between method-calling room and the passed-in room
  * 
  *  @param {Object} room
@@ -154,7 +125,7 @@ Room.prototype.roomBetween = function(room) {
  */ 
 
  /**
-  * @TODO: Write logic for getting possible tiles for the exit
+  * @LATER: Write logic for getting possible tiles for the exit
   * 
   * @param {Object} room
   * @param {String} axis - x or y
@@ -166,7 +137,7 @@ Room.prototype.possibleExits = function(room,axis,wall) {
 
 }
  /**
-  * @TODO: Find a valid x-coordinate for room exit
+  * @LATER: Find a valid x-coordinate for room exit
   * 
   * @param {Object} room
   * @param {String} axis - x or y
@@ -189,7 +160,7 @@ Room.prototype.placePathY = function(room,path,wall) {
  
 }
  /**
-   *  @TODO: Add vertical path between rooms.
+   *  @LATER: Add vertical path between rooms.
    */ 
 
 Room.prototype.addVertPath = function(room, path, wall) {
@@ -197,21 +168,21 @@ Room.prototype.addVertPath = function(room, path, wall) {
   
 }
 /**
- * @TODO: Add a horizontal path between rooms.
+ * @LATER: Add a horizontal path between rooms.
  */ 
 Room.prototype.addHorizPath = function(room, path, wall) {
 
   
 }
 /**
-  * @TODO: Connect to a room with a straight line.
+  * @LATER: Connect to a room with a straight line.
   */ 
 Room.prototype.directConnect = function(room, min) {
 
  
 }
 /**
- * @TODO: Write logic so that both rooms add each 
+ * @LATER: Write logic so that both rooms add each 
  *        other to their respective neighbors arrays
  * 
  * @param {Object} room
@@ -221,7 +192,7 @@ Room.prototype.addNeighbor = function(room) {
 }
 /**
  * 
- * @TODO: Write logic for connecting one room to another with a straight 
+ * @LATER: Write logic for connecting one room to another with a straight 
  *        line.  If connection is successful, return TRUE.
  * 
  *        Constraint: The line cannot be adjacent to other lines.
@@ -233,7 +204,31 @@ Room.prototype.addNeighbor = function(room) {
  */ 
 Room.prototype.connectRoom = function(room, min=3) {
 
+}
 
+/**
+ * Below is work you can complete for other tutorials in the series.
+ */
+
+/**
+ * 
+ * @LATER: Determine whether an x or y coordinate is between a room's
+ *        start and end coordinates
+ * 
+ * @param {Number} c - the x or y coordinate
+ * @param {String} prop - either 'x' or 'y'
+ */ 
+Room.prototype.contains = function(c, prop) {
+
+}
+/**
+ * @LATER: Determine whether a point with coordinates (x,y)
+ *        is inside the room
+ * 
+ * @return {Boolean} if point is in room, true; else, false
+ */ 
+Room.prototype.encloses = function(x,y) {
+   return this.contains(x,'x') && this.contains(y,'y');
 }
 
 /**
@@ -293,9 +288,10 @@ Room.prototype.findNearbyRoom = function(myRoom, rooms) {
  *  Phase 4: Recursion
  */ 
 
+
 /**
  * 
- * @TODO: Write a recursive function that populates an array
+ * @LATER: Write a recursive function that populates an array
  *        with the current room's neighbors and then calls itself on each neighbor, 
  *        adding the resulting ones to the array.
  * 
@@ -308,7 +304,7 @@ Room.prototype.searchNeighbors = function(room, arr) {
 
 }
  /**
-  * @TODO: Write logic that connects the remaining rooms in the network.
+  * @LATER: Write logic that connects the remaining rooms in the network.
   */ 
 Room.prototype.connectRemaining = function() {
 

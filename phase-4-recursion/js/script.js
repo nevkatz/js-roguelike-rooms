@@ -377,16 +377,13 @@ function generateMapRooms() {
 
       success = room.findFacingRooms(min);
 
-      // make diagonal-only? 
       success = room.nearestNeighbor();
  
    }
-   for (var myRoom of game.rooms) {
-
-     let {numConnected, numDisc} = myRoom.connectRemaining();
-
-     console.log(`Room${room.id} conected ${numConnected} out of ${numDisc} disconnected rooms`);
-   }
+   /**
+    * @TODO: Add logic for finding remaining rooms 
+    *        that are not yet in the main network.
+    */ 
 }
 
 function printNeighbors() {

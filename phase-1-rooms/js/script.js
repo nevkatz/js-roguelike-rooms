@@ -206,29 +206,13 @@ function init() {
 init();
 
 
+
 /**
  * Start Game
  */
 
 
-function startGame() {
 
-   generateMapRooms();
-
-   setTimeout(gameSetUp, 1);
-
-   function gameSetUp() {
-      generatePlayer();
-      generateShadow();
-       generateItems(STARTING_WEAPONS_AMOUNT, WEAPON_CODE);
-       generateItems(STARTING_POTIONS_AMOUNT, POTION_CODE);
-       generateEnemies(TOTAL_ENEMIES);
-      drawMap(0, 0, COLS, ROWS);
-      updateStats();
-      // labelRooms();
-   }
-
-}
 function labelRooms() {
    game.context.fillStyle ='black';
    game.context.font = '15px Arial';
@@ -364,35 +348,33 @@ function generateMapRooms() {
 
    game.resetMap();
 
-   let maxRooms = 30;
+   /**
+    * @TODO: Uncomment when the room methods are complete.
+    */ 
+    
+    //let maxRooms = 30;
+   
+    // for (var i = 0; i < maxRooms; ++i) {
+    // addRoom();
+    //  }
 
-   for (var i = 0; i < maxRooms; ++i) {
-      addRoom();
-   }
-   let success = false;
-
-   const min = 3;
-
-   for (var room of game.rooms) {
-
-      success = room.findFacingRooms(min);
-
-      // make diagonal-only? 
-      success = room.nearestNeighbor();
- 
-   }
-   for (var myRoom of game.rooms) {
-
-     let {numConnected, numDisc} = myRoom.connectRemaining();
-
-     console.log(`Room${room.id} conected ${numConnected} out of ${numDisc} disconnected rooms`);
-   }
+   /**
+    * @LATER: Write logic for building connections between rooms. 
+    * 
+    * Assuming you are following the tutorial, 
+    * loop through the existing rooms and try calling
+    * 
+    * findFacingRooms
+    * 
+    * 
+    */ 
 }
 
 function printNeighbors() {
    for (var room of game.rooms) {
       let ids = room.neighbors.map(x => x.id);
 
+      console.log(`room${room.id} neighbors: ${ids}`);
    }
 }
 
@@ -505,6 +487,9 @@ function generateValidCoords() {
    let turns = 0,
       limit = 100;
 
+   console.log('game')
+   console.log(game.map);
+
    do {
       x = Math.floor(Math.random() * COLS);
       y = Math.floor(Math.random() * ROWS);
@@ -548,11 +533,6 @@ function generateEnemies(amount) {
 function generatePlayer() {
 
    let coords = generateValidCoords();
-
-  /* var coords = {
-      x: COLS / 2,
-      y: ROWS / 2
-   };*/
 
    // level, health, weapon, coords, xp
    player = new Player(1, 100, WEAPONS[0], coords, 30);
@@ -707,7 +687,22 @@ function enemyDefeated(enemy) {
    }
 }
 
+function startGame() {
 
+   generateMapRooms();
+
+   setTimeout(gameSetUp, 1);
+
+   function gameSetUp() {
+     //  generatePlayer();
+     //  generateShadow();
+     //  generateItems(STARTING_WEAPONS_AMOUNT, WEAPON_CODE);
+     //  generateItems(STARTING_POTIONS_AMOUNT, POTION_CODE);
+     //  generateEnemies(TOTAL_ENEMIES);
+     drawMap(0, 0, COLS, ROWS);
+     // updateStats();
+   }
+}
 
 function userWins() {
    alert("YOU CONQUERED THE DUNGEON!");

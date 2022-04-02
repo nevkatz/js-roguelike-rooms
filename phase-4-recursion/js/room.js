@@ -17,14 +17,6 @@ class Room {
       this.neighbors = [];
    }
 }
-/**
- *  Horiz overlap
- */ 
-Room.prototype.overlapsHoriz = function(room, tolerance=0) {
-
-   return this.start.x - tolerance <= room.end.x &&
-           this.end.x + tolerance >= room.start.x;
-}
 
 /**
  * @param {Object} room
@@ -41,15 +33,28 @@ Room.prototype.sharesCoordsWith = function(room, coord, min=1) {
 }
 
 /**
- *  Vert overlap
+ *  The overlapsHoriz, overlapsVert, and overlaps methods are covered in
+ *  https://javascript.plainenglish.io/rendering-roguelike-rooms-with-javascript-8a2dc58f3b63
  */ 
-Room.prototype.overlapsVert = function(room, tolerance=0) {
-   return this.start.y - tolerance <= room.end.y &&
-          this.end.y + tolerance >= room.start.y;
+
+/**
+ * @param {Object} room - the other other room
+ * @param {Number} wall - the minimum thickness of the wall between rooms
+ */ 
+Room.prototype.overlaps = function(room, wall=0) {
+   return this.overlapsHoriz(room, wall) && 
+   this.overlapsVert(room, wall);
 }
+Room.prototype.overlapsHoriz = function(room, wall=0) {
 
+   return this.start.x - wall <= room.end.x &&
+           this.end.x + wall >= room.start.x;
+}
+Room.prototype.overlapsVert = function(room, wall=0) {
 
-
+   return this.start.y - wall <= room.end.y &&
+          this.end.y + wall >= room.start.y;
+}
 
 Room.prototype.alignedVert = function(room) {
    return this.center.y = room.center.y;
@@ -88,55 +93,28 @@ Room.prototype.findFacingRooms = function(min=1, maxRooms=1) {
    return success;
 }
 /**
+ * 
+ * @TODO: Write a recursive function that populates an array
+ *        with the current room's neighbors and then calls itself on each neighbor, 
+ *        adding the resulting ones to the array.
+ * 
  * @param {Object} room
  * @param {Array} arr
  */ 
+
 Room.prototype.searchNeighbors = function(room, arr) {
-   for (var room of room.neighbors) {
-
-      if (!arr.includes(room)) {
-  
-         arr.push(room);
-
-         arr = this.searchNeighbors(room, arr);
-      } 
-   }
-   return arr;
+ 
 
 }
+ /**
+  * @TODO: Write logic that connects the remaining rooms in the network.
+  */ 
 Room.prototype.connectRemaining = function() {
 
-   let rooms = this.findPotentialRooms();
-   let connectedRooms = [];
-   let numConnected = 0;
-
-   connectedRooms = this.searchNeighbors(this,connectedRooms);
-   let connectedRoomIds = connectedRooms.map(x => x.id);
-
-
-   let disconnected = rooms.filter(x => !connectedRoomIds.includes(x.id));
-
-   for (var room of disconnected) {
-
-      let success = room.nearestNeighbor(connectedRooms);
-      //debug
-      if (success) {
-         numConnected++;
-      }
-
-    }
-    return {numConnected, numDisc:disconnected.length};
+  
 }
 
 
-/**
- * Used to eliminate rooms.
- * 
- */ 
-Room.prototype.overlaps = function(room, tolerance=0) {
-
-   return this.overlapsHoriz(room, tolerance) && this.overlapsVert(room, tolerance);
-}
 
 
 Room.prototype.contains = function(c, prop) {
@@ -145,7 +123,6 @@ Room.prototype.contains = function(c, prop) {
 Room.prototype.encloses = function(x,y) {
    return this.contains(x,'x') && this.contains(y,'y');
 }
-
 Room.prototype.betweenHoriz = function(room1,room2) {
 
   return this.sharesCoordsWith(room1,'y') && 
@@ -177,10 +154,6 @@ Room.prototype.roomBetween = function(room) {
    } 
    return false;
 }
-/**
- * 
- * @param {Object} room - the other room
- */ 
 Room.prototype.addNeighbor = function(room) {
    this.neighbors.push(room);
    room.neighbors.push(this);
@@ -531,7 +504,27 @@ Room.prototype.findPotentialRooms = function() {
    return rooms;
 }
 
+/**
+ * Find the first room in the list you can connect with.
+ */ 
+Room.prototype.findNearbyRoom = function(myRoom, rooms) {
+   let shortest = null;
+   let nearestRoom = null;
 
+   for (var room of rooms) {
+      
+      if (!myRoom.roomBetween(room)) {
+        
+         let success = myRoom.connectRoom(room);
+         
+         if (success) {
+            return true;
+         }
+
+      }
+   }
+   return false;
+}
 Room.prototype.nearestNeighbor = function(rooms) {
 
    let success = false;

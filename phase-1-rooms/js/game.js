@@ -35,18 +35,37 @@ Game.prototype.reset = function() {
    this.rooms = []
 }
 /**
- * @TODO: Fill the entire game map with wall tiles.
+ * Resets the game map by filling it with a solid mass of wall.
  */ 
 Game.prototype.resetMap = function() {
 
+   this.map = [];
+   // generate a solid wall.
+   for (var row = 0; row < ROWS; row++) {
+      // create row
+      this.map.push([]);
+
+      for (var col = 0; col < COLS; col++) {
+         // create wall
+         this.map[row].push(WALL_CODE);
+      }
+   }
+}
+/**
+ * Adds floor tiles ot the 2D game map that correspond
+ * to the start and end coordinates of the passed-in room.
+ */ 
+Game.prototype.carveRoom = function(room) {
+
+   for (var y = room.start.y; y <= room.end.y; ++y) {
+      for (var x = room.start.x; x <= room.end.x; ++x) {
+
+         this.map[y][x] = FLOOR_CODE;
+      }
+   }
 }
 
-/**
- * @TODO: Return TRUE if the passed-in coordinate is in at least one room.
- */ 
-Game.prototype.inRoom = function({x,y}) {
-   
-}
+
 
 /**
  * @TODO: Add floor tiles to the 2D game map that correspond
@@ -58,14 +77,14 @@ Game.prototype.addPath = function(path) {
  
    
 }
-
 /**
- * @TODO: Add floor tiles ot the 2D game map that correspond
- *        to the start and end coordinates of the passed-in room.
+ * @LATER: Return TRUE if the passed-in coordinate is in at least one room.
  */ 
-Game.prototype.carveRoom = function(room) {
-
+Game.prototype.inRoom = function({x,y}) {
+   
 }
+
+
 
 
 

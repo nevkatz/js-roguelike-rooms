@@ -369,16 +369,19 @@ function generateMapRooms() {
    for (var i = 0; i < maxRooms; ++i) {
       addRoom();
    }
-   /**
-    * @TODO: Write logic for creating rooms. 
-    * 
-    * Assuming you are following the tutorial, 
-    * loop through the existing rooms and try calling
-    * 
-    * findFacingRooms
-    * 
-    * 
-    */ 
+   const min = 3;
+   
+   for (var room of game.rooms) {
+
+      success = room.findFacingRooms(min);
+
+      /**
+       * @TODO: Uncomment the line below when you have written all
+       *        the corner logic.
+       */ 
+      // room.nearestNeighbor();
+ 
+   }
 }
 
 function printNeighbors() {
