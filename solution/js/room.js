@@ -465,6 +465,16 @@ Room.prototype.placePathY = function(room,path,wall) {
 
    return path;
 }
+Room.prototype.placePath = function(room,path,wall,axis) {
+   
+   let {start, end} = this.possibleExits(room, axis, wall);
+
+   path.start[axis] = path.end[axis] = Math.round((start+end)/2);
+
+   path.allowed = true;
+
+   return path;
+}
 Room.prototype.addVertPath = function(room, path, wall) {
 
    path.start.y = Math.min(this.end.y,room.end.y) + 1;

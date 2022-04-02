@@ -422,6 +422,16 @@ Room.prototype.placePathX = function(room,path,wall) {
    }
    return path;
 }
+Room.prototype.placePath = function(room,path,wall,axis) {
+   
+   let {start, end} = this.possibleExits(room, axis, wall);
+
+   path.start[axis] = path.end[axis] = Math.round((start+end)/2);
+
+   path.allowed = true;
+
+   return path;
+}
 Room.prototype.placePathY = function(room,path,wall) {
    
    let {start, end} = this.possibleExits(room,'y', wall);
