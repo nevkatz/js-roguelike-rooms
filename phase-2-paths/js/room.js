@@ -242,12 +242,13 @@ Room.prototype.encloses = function(x,y) {
  *   Phase 3: Corner Logic
  */ 
 
-Room.prototype.nearestNeighbor = function() {
-
-   /**
-    * @TODO: Write a function that tries to find a nearby room using the 
+  /**
+    * @LATER: Write a function that tries to find a nearby room using the 
     *        distance formula.
     */ 
+Room.prototype.nearestNeighbor = function() {
+
+ 
 }
 /**
  *  @TODO: Write logic for creating two paths that meet at a corner
