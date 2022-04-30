@@ -45,7 +45,8 @@ Path.prototype.isAdjacentVert = function(testX) {
                return true;
             }
 
-         } else {
+         }
+         else {
             consecutive = 0;
          }
       }

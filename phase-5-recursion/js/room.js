@@ -98,12 +98,10 @@ Room.prototype.findFacingRooms = function(min=1, maxRooms=1) {
  *        with the current room's neighbors and then calls itself on each neighbor, 
  *        adding the resulting ones to the array.
  * 
- * @param {Object} room
- * @param {Array} arr
+ * @param {Array} reachable - rooms that are already reachable 
+ *                            by the room that originally called the method
  */ 
-
-Room.prototype.searchNeighbors = function(room, arr) {
- 
+Room.prototype.searchNeighbors = function(reachable=[]) {
 
 }
  /**

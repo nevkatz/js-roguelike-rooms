@@ -18,7 +18,7 @@ class Path {
 }
 /**
  * 
- * @TODO: Write logic for testing whether five consecutive tiles in a
+ * @LATER: Write logic for testing whether five consecutive tiles in a
  *        vertical path is adjacent to another vertical path. 
  *        The x coordinate can either be the path's actual 
  *        one or a hypothetical passed-in value.
@@ -31,7 +31,7 @@ Path.prototype.isAdjacentVert = function(testX) {
 
 /**
  * 
- * @TODO: Write logic for testing whether five consecutive tiles in a
+ * @LATER: Write logic for testing whether five consecutive tiles in a
  *        horizontal path is adjacent to another horizontal path. 
  *        The y coordinate can either be the path's actual one or a
  *         hypothetical passed-in value

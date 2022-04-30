@@ -364,7 +364,7 @@ function generateMapRooms() {
 
    game.resetMap();
 
-   let maxRooms = 30;
+   let maxRooms = 20;
 
    for (var i = 0; i < maxRooms; ++i) {
       addRoom();
@@ -692,7 +692,7 @@ function enemyDefeated(enemy) {
    let e_idx = game.enemies.indexOf(enemy);
 
    // remove enemy from array
-   game.enemies.slice(e_idx, 1);
+   game.enemies.splice(e_idx, 1);
 
 
    // update stats

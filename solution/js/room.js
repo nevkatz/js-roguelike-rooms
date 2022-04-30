@@ -88,44 +88,42 @@ Room.prototype.findFacingRooms = function(min=1, maxRooms=1) {
    return success;
 }
 /**
- * @param {Object} room
- * @param {Array} arr
+ * @param {Array} reachable - rooms that are reachable by this room
  */ 
-Room.prototype.searchNeighbors = function(room, arr) {
-   for (var room of room.neighbors) {
+Room.prototype.searchNeighbors = function(reachable=[]) {
+   for (let neighbor of this.neighbors) {
+    
+      if (!reachable.includes(neighbor)) {
 
-      if (!arr.includes(room)) {
-  
-         arr.push(room);
-
-         arr = this.searchNeighbors(room, arr);
+         reachable.push(neighbor);
+         reachable = neighbor.searchNeighbors(reachable);
       } 
    }
-   return arr;
-
+   return reachable;
 }
+
 Room.prototype.connectRemaining = function() {
 
    let rooms = this.findPotentialRooms();
-   let connectedRooms = [];
+
    let numConnected = 0;
 
-   connectedRooms = this.searchNeighbors(this,connectedRooms);
-   let connectedRoomIds = connectedRooms.map(x => x.id);
+   let connectedRooms = this.searchNeighbors();
 
+   let unreachable = rooms.filter(x => !connectedRooms.includes(x));
 
-   let disconnected = rooms.filter(x => !connectedRoomIds.includes(x.id));
-
-   for (var room of disconnected) {
+   for (var room of unreachable) {
+      console.log(`${room.id} is disconnected`);
 
       let success = room.nearestNeighbor(connectedRooms);
-      //debug
+
       if (success) {
+         console.log(`${room.id} has been connected`);
          numConnected++;
       }
 
     }
-    return {numConnected, numDisc:disconnected.length};
+    return {numConnected, numDisc:unreachable.length};
 }
 
 
