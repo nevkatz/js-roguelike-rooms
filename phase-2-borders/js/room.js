@@ -209,11 +209,18 @@ Room.prototype.cornerVert = function(room, corner) {
       if (this.end.y < room.center.y) {
 
            // draw downwards from MC room's bottom
-           vert.start = {x:this.center.x, y:this.end.y + 1};
+           vert.start = {
+            x:this.center.x, 
+            y:this.end.y + 1
+           };
+
            vert.doorTop = true;
 
            // end at the corner
-           vert.end = corner;
+           vert.end = {
+            x:corner.x + vert.floorSpan - 1,
+            y:corner.y
+         }
       }
       /**  
        * else if this is below
@@ -227,7 +234,10 @@ Room.prototype.cornerVert = function(room, corner) {
           vert.start = corner;
 
           // to this room's top edge and horizontal center.
-          vert.end = {x:this.center.x, y:this.start.y - 1};
+          vert.end = {
+            x:this.center.x + vert.floorSpan - 1,
+            y:this.start.y - 1
+         };
           vert.doorBot = true;
       }
       else {
@@ -252,7 +262,10 @@ Room.prototype.cornerVert = function(room, corner) {
          horiz.start = corner;
 
          // end when you get to start of other room
-         horiz.end = {x:room.start.x - 1, y:room.center.y};
+         horiz.end = {
+            x:room.start.x - 1, 
+            y:room.center.y + horiz.floorSpan -1
+         };
  
       }
       /**  
@@ -270,9 +283,11 @@ Room.prototype.cornerVert = function(room, corner) {
            // Start horizontal path from the room on left.
            horiz.start = {x:room.end.x + 1, y:room.center.y};
 
-           corner.x += 1;
            // End the horizontal path at this room's center.
-           horiz.end = corner;
+           horiz.end = {
+              x:corner.x,
+              y:corner.y + horiz.floorSpan -1
+           }
      
       }
       else {
@@ -281,8 +296,9 @@ Room.prototype.cornerVert = function(room, corner) {
 
       if (!vert.isAdjacentVert() && 
           !horiz.isAdjacentHoriz()) {
-           game.addPathVert(vert);
-           game.addPathHoriz(horiz);
+
+           vert.addVert();
+           horiz.addHoriz();
 
            this.addNeighbor(room);
       }
@@ -308,8 +324,10 @@ Room.prototype.cornerHoriz = function(room, corner) {
        */
       // on left
       if (room.center.x > this.end.x) {
-         horiz.start = {x:this.end.x + 1,y:this.center.y};
-         horiz.end = corner;
+         horiz.start = {
+            x:this.end.x + 1,
+            y:this.center.y
+         };
       }
       /**
        * 
@@ -324,8 +342,14 @@ Room.prototype.cornerHoriz = function(room, corner) {
        *  *--- this (onRight)
        */
       else if (room.center.x < this.start.x) {
-         horiz.start  = corner,
-         horiz.end = {x:this.start.x - 1,y:this.center.y}
+         horiz.start = corner,
+         /**
+          * @TODO: Change end coordinates
+          */ 
+         horiz.end = {
+            x:this.start.x - 1,
+            y:this.center.y + horiz.floorSpan - 1
+         }
       }
       else {
          console.log(`Target room${room.id} center x is between MC Room${this.id} start and end; corner connect failed`);
@@ -342,7 +366,10 @@ Room.prototype.cornerHoriz = function(room, corner) {
       if (this.center.y < room.start.y) {
            vert.start = corner,
              // end at top center of other room
-           vert.end = {x:room.center.x, y:room.start.y - 1}
+           vert.end = {
+            x:room.center.x + vert.floorSpan - 1, 
+            y:room.start.y - 1
+           };
            vert.doorBot = true;
     
       }
@@ -352,10 +379,18 @@ Room.prototype.cornerHoriz = function(room, corner) {
        *            |
        *            |
        * this-------*-------this
+       *           corner
        */
       else if (this.center.y > room.end.y) {
-          vert.start = {x:room.center.x, y:room.end.y + 1};
-          vert.end = corner
+          vert.start = {
+            x:room.center.x,
+            y:room.end.y + 1
+          };
+         
+          vert.end = {
+            x:corner.x + vert.floorSpan - 1,
+            y:corner.y
+          };
           vert.doorTop = true;
       }
       else {
@@ -366,8 +401,8 @@ Room.prototype.cornerHoriz = function(room, corner) {
       if (!vert.isAdjacentVert() && 
           !horiz.isAdjacentHoriz()) {
 
-           game.addPathVert(vert);
-           game.addPathHoriz(horiz);
+           vert.addVert();
+           horiz.addHoriz();
 
            this.addNeighbor(room);
       }
@@ -451,7 +486,7 @@ Room.prototype.placePathY = function(room,path,wall) {
 
    return path;
 }
-Room.prototype.addVertPath = function(room, path, wall, doorTop, doorBot) {
+Room.prototype.addVertPath = function(room, path, wall) {
 
    path.start.y = Math.min(this.end.y,room.end.y) + 1;
 
@@ -460,8 +495,8 @@ Room.prototype.addVertPath = function(room, path, wall, doorTop, doorBot) {
    path = this.placePathX(room,path,wall);
  
    if (path.allowed) {
-       
-          game.addPathVert(path, doorTop, doorBot);
+         
+          path.addVert();
 
           this.addNeighbor(room);
    }
@@ -483,7 +518,7 @@ Room.prototype.addHorizPath = function(room, path, wall) {
   
    if (path.allowed) {
 
-          game.addPathHoriz(path);
+          path.addHoriz();
 
           this.addNeighbor(room);
    }

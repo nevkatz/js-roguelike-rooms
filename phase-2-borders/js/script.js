@@ -64,7 +64,7 @@ const TILE_COLORS = [
    // border
    'purple',
    // door
-   'pink',
+   'dodgerblue',
    // empty 
    'lightblue',
    // block
@@ -232,7 +232,7 @@ function startGame() {
        generateEnemies(TOTAL_ENEMIES);
       drawMap(0, 0, COLS, ROWS);
       updateStats();
-      // labelRooms();
+       labelRooms();
    }
 
 }

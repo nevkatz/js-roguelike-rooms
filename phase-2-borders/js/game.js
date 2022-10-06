@@ -39,54 +39,7 @@ Game.prototype.inRoom = function({x,y}) {
    return this.rooms.find(r => r.encloses(x,y));
 }
 
-Game.prototype.addPathHoriz = function(path) {
-   const y = path.start.y;
 
-   // border
-   for (let x = path.start.x-1; x <= path.end.x+1; ++x) {
-
-      for (let dy of [y-1,y+path.width]) {
-          if (game.map[dy][x] != FLOOR_CODE) {
-             game.map[dy][x] = BORDER_CODE;
-          }
-      }
-   }
-   for (let x = path.start.x; x <= path.end.x; ++x) {
-
-         for (let z = 0; z < path.width; ++z) {
-            game.map[y+z][x] = FLOOR_CODE;
-         }
-   }
-}
-
-Game.prototype.addPathVert = function(path) {
-   
-   const x = path.start.x;
-   // border
-   for (let y = path.start.y; y <= path.end.y+1; ++y) {
-      for (let dx of [x-1,x+path.width]) {
-         if (game.map[y][dx] != FLOOR_CODE) {
-            game.map[y][dx] = BORDER_CODE;
-         }
-      }
-   }
-
-   for (let z = 0; z < path.width; ++z) {
-
-     for (let y = path.start.y; y <= path.end.y; ++y) {
-           game.map[y][x+z] = FLOOR_CODE;
-         }
-         if (path.doorTop) {
-               game.map[path.start.y][x+z] = DOOR_CODE; 
-         }
-         if (path.doorBot) {
-
-              game.map[path.end.y][x+z] = DOOR_CODE;
-              game.map[path.end.y+1][x+z] = DOOR_CODE;
-
-         }
-   }
-}
 
 Game.prototype.resetMap = function() {
 
