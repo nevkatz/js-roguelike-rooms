@@ -22,6 +22,7 @@ const DOOR_CODE = 7;
 const EMPTY_CODE = 8;
 const BLOCK_CODE = 9;
 
+const SOLIDS = [WALL_CODE, BORDER_CODE, EMPTY_CODE, BLOCK_CODE];
 const POTIONS = [10, 20, 30, 40, 50];
 
 // possible health that enemies can have
@@ -60,13 +61,13 @@ const TILE_COLORS = [
    'green',
    // weapon
    'orange',
-
+   // border
    'purple',
-
+   // door
    'pink',
-
+   // empty 
    'lightblue',
-
+   // block
    'lightgreen'
 ];
 
@@ -623,7 +624,7 @@ function addKeyboardListener() {
          let enemy = game.enemies.find(matching_coords);
 
          fightEnemy(enemy);
-      } else if (game.map[y][x] != WALL_CODE) {
+      } else if (!SOLIDS.includes(game.map[y][x])) {
          // if next spot is potion
          if (game.map[y][x] == POTION_CODE) {
 

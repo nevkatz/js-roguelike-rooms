@@ -452,12 +452,10 @@ Room.prototype.addVertPath = function(room, path, wall) {
 
    path.end.y = Math.max(this.start.y,room.start.y) - 1;
 
-
    path = this.placePathX(room,path,wall);
  
    if (path.allowed) {
        
-
           game.addPath(path);
 
           this.addNeighbor(room);

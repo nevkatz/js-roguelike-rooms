@@ -60,7 +60,7 @@ Game.prototype.resetMap = function() {
 
       for (var col = 0; col < COLS; col++) {
          // create wall
-         this.map[row].push(WALL_CODE);
+         this.map[row].push(EMPTY_CODE);
          this.shadow[row].push(SHADOW_CODE);
       }
    }
