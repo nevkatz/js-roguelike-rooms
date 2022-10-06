@@ -458,7 +458,8 @@ Room.prototype.placePathX = function(room,path,wall) {
          // add inRoom logic for corners? 
          if (!path.isAdjacentVert(x)) {
                path.allowed = true;
-               path.start.x = path.end.x = x;
+               path.start.x = x;
+               path.end.x = path.start.x + path.floorSpan - 1;
                break;
          }
    }
@@ -482,7 +483,8 @@ Room.prototype.placePathY = function(room,path,wall) {
 
          if (!path.isAdjacentHoriz(y)) {
                path.allowed = true;
-               path.start.y = path.end.y = y;
+               path.start.y = y;
+               path.end.y = path.start.y + path.floorSpan - 1;
                break;
          
          }
