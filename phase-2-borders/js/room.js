@@ -176,9 +176,20 @@ Room.prototype.connectRoom = function(room, min=3) {
    if (!success) {
       // if we add doorTiles logic we need to mix in the inRoom
       // so it can'b be adjacent and it can't be in a room.
-      let vertCorner = {x:this.center.x,y:room.center.y};
 
-      let horizCorner = {x:room.center.x, y:this.center.y};
+      const cornerDim = 2;
+      let vertCorner = {
+                        x:this.center.x,
+                        y:room.center.y,
+                        dim:cornerDim
+                     };
+
+
+      let horizCorner = {
+                          x:room.center.x, 
+                          y:this.center.y,
+                          dim:cornerDim
+                       };
 
       let vert = Math.random() < 0.5;
 
@@ -186,7 +197,7 @@ Room.prototype.connectRoom = function(room, min=3) {
          success = this.cornerVert(room, vertCorner);
       }
       if (!success && !game.inRoom(horizCorner)) {
-         success = this.cornerHoriz(room, horizCorner);
+        // success = this.cornerHoriz(room, horizCorner);
       }
       
    }
@@ -216,11 +227,11 @@ Room.prototype.cornerVert = function(room, corner) {
 
            vert.doorTop = true;
 
-           // end at the corner
+
            vert.end = {
             x:corner.x + vert.floorSpan - 1,
-            y:corner.y,
-            corner:true
+            y:corner.y + horiz.floorSpan,
+            corner: (room.start.x < this.start.x) ? CORNER_RIGHT : CORNER_LEFT
          }
       }
       /**  
@@ -233,7 +244,7 @@ Room.prototype.cornerVert = function(room, corner) {
       else if (this.start.y > room.center.y)  {
           // Drawing downwards from the other room's vertical center
           vert.start = corner;
-          vert.start.corner = true;
+          vert.start.corner = (room.start.x < this.start.x) ? CORNER_RIGHT : CORNER_LEFT;
           // to this room's top edge and horizontal center.
           vert.end = {
             x:this.center.x + vert.floorSpan - 1,
@@ -265,6 +276,7 @@ Room.prototype.cornerVert = function(room, corner) {
 
          // end when you get to start of other room
          horiz.end = {
+            // ends right before a room
             x:room.start.x - 1, 
             y:room.center.y + horiz.floorSpan -1
          };
@@ -287,9 +299,10 @@ Room.prototype.cornerVert = function(room, corner) {
 
            // End the horizontal path at this room's center.
            horiz.end = {
-              x:corner.x,
+              x:corner.x + vert.floorSpan - 1,
               y:corner.y + horiz.floorSpan -1,
-              corner:true
+              // if other room is higher, corner will be on bottom
+              corner: (room.end.y < this.start.y) ? CORNER_TOP : CORNER_BOT
            }
      
       }
@@ -332,9 +345,9 @@ Room.prototype.cornerHoriz = function(room, corner) {
             y:this.center.y
          };
           horiz.end = {
-            x:corner.x,
+            x:corner.x + vert.floorSpan - 1,
             y:corner.y + horiz.floorSpan - 1,
-            corner:true
+            corner: (room.end.y < this.start.y) ? CORNER_BOT : CORNER_TOP
          };
       }
       /**
@@ -374,10 +387,12 @@ Room.prototype.cornerHoriz = function(room, corner) {
        */ 
       if (this.center.y < room.start.y) {
            vert.start = corner;
-           vert.start.corner = true;
+           vert.start.corner = (room.end.x < this.start.x) ? CORNER_LEFT : CORNER_RIGHT;
              // end at top center of other room
            vert.end = {
-            x:room.center.x + vert.floorSpan - 1, 
+            // add width of the path
+            x:vert.start.x + vert.floorSpan - 1, 
+            // ending right before the room
             y:room.start.y - 1
            };
            vert.doorBot = true;
@@ -399,8 +414,10 @@ Room.prototype.cornerHoriz = function(room, corner) {
          
           vert.end = {
             x:corner.x + vert.floorSpan - 1,
-            y:corner.y,
-            corner:true
+            // -1 is needed for corner
+            y:corner.y + horiz.floorSpan,
+
+            corner: (room.end.x < this.start.x) ? CORNER_RIGHT : CORNER_LEFT
           };
           vert.doorTop = true;
       }

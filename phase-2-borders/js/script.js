@@ -16,11 +16,20 @@ const ENEMY_CODE = 3;
 const POTION_CODE = 4;
 const WEAPON_CODE = 5;
 
+
+const CORNER_TOP = 1;
+const CORNER_LEFT = 1;
+
+const CORNER_BOT = 2;
+const CORNER_RIGHT = 2;
+
 /* all these are wall types */
 const BORDER_CODE = 6;
 const DOOR_CODE = 7;
 const EMPTY_CODE = 8;
 const BLOCK_CODE = 9;
+const RELIC_CODE = 10;
+const KEY_CODE = 11;
 
 const SOLIDS = [WALL_CODE, BORDER_CODE, EMPTY_CODE, BLOCK_CODE];
 const POTIONS = [10, 20, 30, 40, 50];
@@ -68,7 +77,11 @@ const TILE_COLORS = [
    // empty 
    'lightblue',
    // block
-   'lightgreen'
+   '#f06d06',
+   // relic
+   'dodgerblue',
+   //
+   'maroon'
 ];
 
 
@@ -227,9 +240,9 @@ function startGame() {
    function gameSetUp() {
       generatePlayer();
       generateShadow();
-       generateItems(STARTING_WEAPONS_AMOUNT, WEAPON_CODE);
-       generateItems(STARTING_POTIONS_AMOUNT, POTION_CODE);
-       generateEnemies(TOTAL_ENEMIES);
+    //   generateItems(STARTING_WEAPONS_AMOUNT, WEAPON_CODE);
+    //   generateItems(STARTING_POTIONS_AMOUNT, POTION_CODE);
+     //  generateEnemies(TOTAL_ENEMIES);
       drawMap(0, 0, COLS, ROWS);
       updateStats();
        labelRooms();
