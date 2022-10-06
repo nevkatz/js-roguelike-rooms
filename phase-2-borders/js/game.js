@@ -65,14 +65,35 @@ Game.prototype.resetMap = function() {
       }
    }
 }
-Game.prototype.carveRoom = function(room) {
+Game.prototype.addBorder = function(room) {
+   let start = {
+      x:room.start.x -1,
+      y:room.start.y -1
+   };
+   let end = {
+      x:room.end.x + 1,
+      y:room.end.y + 1
+   };
+   for (let x = start.x; x <= end.x; ++x) {
 
-   for (var y = room.start.y; y <= room.end.y; ++y) {
-      for (var x = room.start.x; x <= room.end.x; ++x) {
+      this.map[start.y][x] = BORDER_CODE;
+      this.map[end.y][x] = BORDER_CODE;
+   }
+   for (let y = start.y; y <= end.y; ++y) {
+
+    this.map[y][start.x] = BORDER_CODE;
+    this.map[y][end.x] = BORDER_CODE;
+   }
+}
+Game.prototype.addRoom = function(room) {
+
+   for (let y = room.start.y; y <= room.end.y; ++y) {
+      for (let x = room.start.x; x <= room.end.x; ++x) {
 
          this.map[y][x] = FLOOR_CODE;
       }
    }
+
 }
 
 

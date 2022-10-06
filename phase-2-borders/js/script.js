@@ -320,7 +320,7 @@ function generateRoom(center, width, height) {
 
 }
 
-function addRoom(c) {
+function createRoom(c) {
    const genCenterCoord = (maxCells, dim) => {
       // get limit on either side based on outer limit and a room dimension - width or height
       let limit = OUTER_LIMIT + Math.round(dim / 2);
@@ -345,7 +345,7 @@ function addRoom(c) {
 
    for (var gameRoom of game.rooms) {
 
-      if (room.overlaps(gameRoom, 1)) {
+      if (room.overlaps(gameRoom, 2)) {
          return null;
       }
 
@@ -354,7 +354,8 @@ function addRoom(c) {
    game.curRoomId++;
 
 
-   game.carveRoom(room);
+   game.addRoom(room);
+   game.addBorder(room);
 
    game.rooms.push(room);
    return room;
@@ -374,7 +375,7 @@ function generateMapRooms() {
    let maxRooms = 20;
 
    for (var i = 0; i < maxRooms; ++i) {
-      addRoom();
+      createRoom();
    }
    let success = false;
 
