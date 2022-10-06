@@ -60,11 +60,11 @@ const TILE_COLORS = [
    // health drop
    'green',
    // weapon
-   'orange',
+   'grey',
    // border
    'purple',
    // door
-   'dodgerblue',
+   'orange',
    // empty 
    'lightblue',
    // block

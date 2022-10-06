@@ -219,7 +219,8 @@ Room.prototype.cornerVert = function(room, corner) {
            // end at the corner
            vert.end = {
             x:corner.x + vert.floorSpan - 1,
-            y:corner.y
+            y:corner.y,
+            corner:true
          }
       }
       /**  
@@ -232,7 +233,7 @@ Room.prototype.cornerVert = function(room, corner) {
       else if (this.start.y > room.center.y)  {
           // Drawing downwards from the other room's vertical center
           vert.start = corner;
-
+          vert.start.corner = true;
           // to this room's top edge and horizontal center.
           vert.end = {
             x:this.center.x + vert.floorSpan - 1,
@@ -260,6 +261,7 @@ Room.prototype.cornerVert = function(room, corner) {
 
          // start horizontal path from corner 
          horiz.start = corner;
+         horiz.start.corner = true;
 
          // end when you get to start of other room
          horiz.end = {
@@ -286,7 +288,8 @@ Room.prototype.cornerVert = function(room, corner) {
            // End the horizontal path at this room's center.
            horiz.end = {
               x:corner.x,
-              y:corner.y + horiz.floorSpan -1
+              y:corner.y + horiz.floorSpan -1,
+              corner:true
            }
      
       }
@@ -330,7 +333,8 @@ Room.prototype.cornerHoriz = function(room, corner) {
          };
           horiz.end = {
             x:corner.x,
-            y:corner.y + horiz.floorSpan - 1
+            y:corner.y + horiz.floorSpan - 1,
+            corner:true
          };
       }
       /**
@@ -346,7 +350,8 @@ Room.prototype.cornerHoriz = function(room, corner) {
        *  *--- this (onRight)
        */
       else if (room.center.x < this.start.x) {
-         horiz.start = corner,
+         horiz.start = corner;
+         horiz.start.corner = true;
          /**
           * @TODO: Change end coordinates
           */ 
@@ -368,7 +373,8 @@ Room.prototype.cornerHoriz = function(room, corner) {
        * 
        */ 
       if (this.center.y < room.start.y) {
-           vert.start = corner,
+           vert.start = corner;
+           vert.start.corner = true;
              // end at top center of other room
            vert.end = {
             x:room.center.x + vert.floorSpan - 1, 
@@ -393,7 +399,8 @@ Room.prototype.cornerHoriz = function(room, corner) {
          
           vert.end = {
             x:corner.x + vert.floorSpan - 1,
-            y:corner.y
+            y:corner.y,
+            corner:true
           };
           vert.doorTop = true;
       }

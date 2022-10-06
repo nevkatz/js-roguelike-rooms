@@ -4,12 +4,14 @@ class Path {
 
       this.start = {
          x: 0,
-         y: 0
+         y: 0,
+         corner:false
       };
 
       this.end = {
          x: 0,
-         y: 0
+         y: 0,
+         corner:false
       };
       this.doorTop = doorTop;
       this.doorBot = doorBot;
