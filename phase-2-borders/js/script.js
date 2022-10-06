@@ -50,7 +50,7 @@ const STARTING_WEAPONS_AMOUNT = 10;
 
 const TILE_COLORS = [
    // wall
-   'grey',
+   'lightgrey',
    // floor
    'white',
    // player
@@ -345,7 +345,7 @@ function createRoom(c) {
 
    for (var gameRoom of game.rooms) {
 
-      if (room.overlaps(gameRoom, 2)) {
+      if (room.overlaps(gameRoom, 3)) {
          return null;
       }
 
@@ -356,6 +356,7 @@ function createRoom(c) {
 
    game.addRoom(room);
    game.addBorder(room);
+   game.addTopWall(room);
 
    game.rooms.push(room);
    return room;

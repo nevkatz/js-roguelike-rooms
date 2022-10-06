@@ -1,16 +1,20 @@
 class Path {
 
-   constructor(points = {}) {
+   constructor(doorTop=false, doorBot=false) {
 
-      this.start = points.start || {
+      this.start = {
          x: 0,
          y: 0
       };
 
-      this.end = points.end || {
+      this.end = {
          x: 0,
          y: 0
       };
+      this.doorTop = doorTop;
+      this.doorBot = doorBot;
+
+      this.width = 2;
 
       this.allowed = false;
 
@@ -20,6 +24,7 @@ class Path {
  * @param {Number} testX
  */ 
 Path.prototype.isAdjacentVert = function(testX) {
+   
 
    const limit = 5;
 
@@ -31,7 +36,7 @@ Path.prototype.isAdjacentVert = function(testX) {
 
       for (var y = this.start.y; y <= this.end.y; ++y) {
 
-         if (game.map[y][x + diff] == FLOOR_CODE) {
+         if (game.map[y][x + diff*this.width] == FLOOR_CODE) {
             consecutive++;
 
             if (consecutive == limit) {
@@ -59,7 +64,7 @@ Path.prototype.isAdjacentHoriz = function(testY) {
 
       for (var x = this.start.x; x <= this.end.x; ++x) {
 
-         if (game.map[y + diff] &&
+         if (game.map[y + diff*this.width] &&
             game.map[y + diff][x] == FLOOR_CODE) {
             consecutive++;
 

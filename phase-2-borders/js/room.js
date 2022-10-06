@@ -210,6 +210,7 @@ Room.prototype.cornerVert = function(room, corner) {
 
            // draw downwards from MC room's bottom
            vert.start = {x:this.center.x, y:this.end.y + 1};
+           vert.doorTop = true;
 
            // end at the corner
            vert.end = corner;
@@ -227,6 +228,7 @@ Room.prototype.cornerVert = function(room, corner) {
 
           // to this room's top edge and horizontal center.
           vert.end = {x:this.center.x, y:this.start.y - 1};
+          vert.doorBot = true;
       }
       else {
           console.log(`Target room${room.id} center x is between MC Room${this.id} start and end; corner connect failed`);
@@ -268,6 +270,7 @@ Room.prototype.cornerVert = function(room, corner) {
            // Start horizontal path from the room on left.
            horiz.start = {x:room.end.x + 1, y:room.center.y};
 
+           corner.x += 1;
            // End the horizontal path at this room's center.
            horiz.end = corner;
      
@@ -278,8 +281,8 @@ Room.prototype.cornerVert = function(room, corner) {
 
       if (!vert.isAdjacentVert() && 
           !horiz.isAdjacentHoriz()) {
-           game.addPath(vert);
-           game.addPath(horiz);
+           game.addPathVert(vert);
+           game.addPathHoriz(horiz);
 
            this.addNeighbor(room);
       }
@@ -289,7 +292,7 @@ Room.prototype.cornerVert = function(room, corner) {
 
 Room.prototype.cornerHoriz = function(room, corner) {
 
-   let horiz = new Path(), vert = new Path;
+   let horiz = new Path(), vert = new Path();
    
       /**  
        * 
@@ -305,8 +308,8 @@ Room.prototype.cornerHoriz = function(room, corner) {
        */
       // on left
       if (room.center.x > this.end.x) {
-         horiz.start = {x:this.end.x + 1,y:this.center.y},
-         horiz.end = corner
+         horiz.start = {x:this.end.x + 1,y:this.center.y};
+         horiz.end = corner;
       }
       /**
        * 
@@ -340,6 +343,7 @@ Room.prototype.cornerHoriz = function(room, corner) {
            vert.start = corner,
              // end at top center of other room
            vert.end = {x:room.center.x, y:room.start.y - 1}
+           vert.doorBot = true;
     
       }
       /**
@@ -350,8 +354,9 @@ Room.prototype.cornerHoriz = function(room, corner) {
        * this-------*-------this
        */
       else if (this.center.y > room.end.y) {
-          vert.start = {x:room.center.x, y:room.end.y + 1},
+          vert.start = {x:room.center.x, y:room.end.y + 1};
           vert.end = corner
+          vert.doorTop = true;
       }
       else {
          console.log(`MC Room${this.id} center y is between Target Room${room.id} start and end; corner connect failed`);
@@ -361,8 +366,8 @@ Room.prototype.cornerHoriz = function(room, corner) {
       if (!vert.isAdjacentVert() && 
           !horiz.isAdjacentHoriz()) {
 
-           game.addPath(vert);
-           game.addPath(horiz);
+           game.addPathVert(vert);
+           game.addPathHoriz(horiz);
 
            this.addNeighbor(room);
       }
@@ -446,7 +451,7 @@ Room.prototype.placePathY = function(room,path,wall) {
 
    return path;
 }
-Room.prototype.addVertPath = function(room, path, wall) {
+Room.prototype.addVertPath = function(room, path, wall, doorTop, doorBot) {
 
    path.start.y = Math.min(this.end.y,room.end.y) + 1;
 
@@ -456,7 +461,7 @@ Room.prototype.addVertPath = function(room, path, wall) {
  
    if (path.allowed) {
        
-          game.addPath(path);
+          game.addPathVert(path, doorTop, doorBot);
 
           this.addNeighbor(room);
    }
@@ -478,7 +483,7 @@ Room.prototype.addHorizPath = function(room, path, wall) {
   
    if (path.allowed) {
 
-          game.addPath(path);
+          game.addPathHoriz(path);
 
           this.addNeighbor(room);
    }
@@ -487,11 +492,12 @@ Room.prototype.addHorizPath = function(room, path, wall) {
 }
 Room.prototype.directConnect = function(room, min) {
 
- let path = new Path();
+ let path = new Path(true,true);
  
  const wall = parseInt((min-1)/2);
 
  if (this.sharesCoordsWith(room, 'x', min)) {
+   
 
       path = this.addVertPath(room,path,wall);  
  }
