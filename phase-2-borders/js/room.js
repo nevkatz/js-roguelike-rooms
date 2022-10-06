@@ -328,6 +328,10 @@ Room.prototype.cornerHoriz = function(room, corner) {
             x:this.end.x + 1,
             y:this.center.y
          };
+          horiz.end = {
+            x:corner.x,
+            y:corner.y + horiz.floorSpan - 1
+         };
       }
       /**
        * 
