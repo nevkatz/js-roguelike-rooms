@@ -11,6 +11,7 @@
 class Game {
    constructor() {
       this.rooms = [];
+      this.paths = [];
       this.curRoomId = 0;
 
       this.map = [];

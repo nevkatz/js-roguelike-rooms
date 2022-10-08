@@ -33,8 +33,8 @@ Path.prototype.isAdjacentVert = function(testX) {
 
    const arr = [FLOOR_CODE,BORDER_CODE,DOOR_CODE];
 
-   let left = x-1;
-   let right =  x+this.floorSpan;
+   let left = x-2;
+   let right = x+2;// x+this.floorSpan;
    for (var checkX of [left,right]) {
 
       let consecutive = 0;
@@ -66,8 +66,8 @@ Path.prototype.isAdjacentHoriz = function(testY) {
 
    const arr = [FLOOR_CODE,BORDER_CODE,DOOR_CODE];
 
-   const top = y-1;
-   const bot = y+this.floorSpan;
+   const top = y-2;
+   const bot = y+2; //y+this.floorSpan;
    for (let checkY of [top,bot]) {
 
       let consecutive = 0;
@@ -147,6 +147,8 @@ Path.prototype.addVert = function() {
 Path.prototype.addHorizBorder = function() {
    
    const {y} = this.start;
+
+   const arr = [DOOR_CODE, FLOOR_CODE, WALL_CODE,BORDER_CODE];
 
    for (let x = this.start.x; x <= this.end.x; ++x) {
 
