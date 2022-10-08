@@ -609,27 +609,7 @@ Room.prototype.findPotentialRooms = function() {
    return rooms;
 }
 
-/**
- * Find the first room in the list you can connect with.
- */ 
-Room.prototype.findNearbyRoom = function(myRoom, rooms) {
-   let shortest = null;
-   let nearestRoom = null;
 
-   for (var room of rooms) {
-      
-      if (!myRoom.roomBetween(room)) {
-        
-         let success = myRoom.connectRoom(room);
-         
-         if (success) {
-            return true;
-         }
-
-      }
-   }
-   return false;
-}
 Room.prototype.nearestNeighbor = function(rooms) {
 
    let success = false;
