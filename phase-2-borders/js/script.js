@@ -369,7 +369,7 @@ function createRoom(c) {
 
    game.addRoom(room);
    game.addBorder(room);
-   game.addTopWall(room);
+   room.addTopWall();
 
    game.rooms.push(room);
    return room;
@@ -402,10 +402,12 @@ function generateMapRooms() {
       success = room.nearestNeighbor();
  
    }
-   /**
-    * @TODO: Add logic for finding remaining rooms 
-    *        that are not yet in the main network.
-    */ 
+   for (var myRoom of game.rooms) {
+
+     let {numConnected, numDisc} = myRoom.connectRemaining();
+
+     console.log(`Room${myRoom.id} connected ${numConnected} out of ${numDisc} disconnected rooms`);
+   }
 }
 
 function printNeighbors() {

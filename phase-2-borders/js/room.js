@@ -31,6 +31,12 @@ Room.prototype.sharesCoordsWith = function(room, coord, min=1) {
 
 
 }
+Room.prototype.addTopWall = function() {
+   let {start,end} = this;
+   for (let x = start.x; x <= end.x; ++x) {
+      game.map[start.y][x] = WALL_CODE;
+   }
+}
 
 /**
  *  The overlapsHoriz, overlapsVert, and overlaps methods are covered in
@@ -93,24 +99,44 @@ Room.prototype.findFacingRooms = function(min=1, maxRooms=1) {
    return success;
 }
 /**
- * 
- * @TODO: Write a recursive function that populates an array
- *        with the current room's neighbors and then calls itself on each neighbor, 
- *        adding the resulting ones to the array.
- * 
- * @param {Array} reachable - rooms that are already reachable 
- *                            by the room that originally called the method
+ * @param {Array} reachable - rooms that are reachable by this room
  */ 
 Room.prototype.searchNeighbors = function(reachable=[]) {
+   for (let neighbor of this.neighbors) {
+    
+      if (!reachable.includes(neighbor)) {
 
+         reachable.push(neighbor);
+         reachable = neighbor.searchNeighbors(reachable);
+      } 
+   }
+   return reachable;
 }
- /**
-  * @TODO: Write logic that connects the remaining rooms in the network.
-  */ 
+
 Room.prototype.connectRemaining = function() {
 
-  
+   let rooms = this.findPotentialRooms();
+
+   let numConnected = 0;
+
+   let connectedRooms = this.searchNeighbors();
+
+   let unreachable = rooms.filter(x => !connectedRooms.includes(x));
+
+   for (var room of unreachable) {
+      console.log(`${room.id} is disconnected`);
+
+      let success = room.nearestNeighbor(connectedRooms);
+
+      if (success) {
+         console.log(`${room.id} has been connected`);
+         numConnected++;
+      }
+
+    }
+    return {numConnected, numDisc:unreachable.length};
 }
+
 
 
 
@@ -230,7 +256,7 @@ Room.prototype.cornerVert = function(room, corner) {
 
            vert.end = {
             x:corner.x + vert.floorSpan - 1,
-            y:corner.y + horiz.floorSpan,
+            y:corner.y + horiz.floorSpan -1,
             corner: (room.start.x < this.start.x) ? CORNER_RIGHT : CORNER_LEFT
          }
       }
@@ -354,19 +380,19 @@ Room.prototype.cornerHoriz = function(room, corner) {
        * 
        * ON RIGHT
        * 
-       *  *--- this (onRight)
+       *  *--- this (onRight) CORNER_TOP
        *  |
        *  |
        * room
        *  |
        *  |
-       *  *--- this (onRight)
+       *  *--- this (onRight) CORNER_BOT
        */
       else if (room.center.x < this.start.x) {
          horiz.start = corner;
-         horiz.start.corner = true;
+         horiz.start.corner = (room.end.y < this.start.y) ? CORNER_BOT : CORNER_TOP;
          /**
-          * @TODO: Change end coordinates
+          * @TODO: Check end coordinates
           */ 
          horiz.end = {
             x:this.start.x - 1,

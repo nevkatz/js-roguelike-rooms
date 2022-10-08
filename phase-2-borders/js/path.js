@@ -90,12 +90,18 @@ Path.prototype.addHoriz = function() {
    for (let x = this.start.x; x <= this.end.x; ++x) {
 
          for (let z = 0; z < this.floorSpan; ++z) {
-            game.map[y+z][x] = EMPTY_CODE;
+            game.map[y+z][x] = FLOOR_CODE;
          }
    }
 }
 
+Path.prototype.addDoor = function(x,y) {
+   const doorHeight = 2;
+   for (let i = 0; i < doorHeight; ++i) {
+         game.map[y+i][x] = DOOR_CODE; 
 
+   }
+}
 Path.prototype.addVert = function() {
    
    const x = this.start.x;
@@ -104,18 +110,16 @@ Path.prototype.addVert = function() {
 
    for (let z = 0; z < this.floorSpan; ++z) {
 
-     for (let y = this.start.y; y <= this.end.y; ++y) {
-           game.map[y][x+z] = WALL_CODE;
-         }
-         if (this.doorTop) {
-               game.map[this.start.y][x+z] = DOOR_CODE; 
+         for (let y = this.start.y; y <= this.end.y; ++y) {
+           game.map[y][x+z] = FLOOR_CODE;
          }
          if (this.doorBot) {
-
-              game.map[this.end.y][x+z] = DOOR_CODE;
-              game.map[this.end.y+1][x+z] = DOOR_CODE;
-
+            this.addDoor(x+z, this.end.y);
          }
+         else if (this.doorTop) {
+               this.addDoor(x+z,this.start.y)
+         }
+       
    }
 }
 Path.prototype.addHorizBorder = function() {
@@ -133,37 +137,56 @@ Path.prototype.addHorizBorder = function() {
 
    const top = this.start.y - 1;
    const bot = this.end.y + 1;
-   const before = this.start.x - 1;
-   const after = this.end.x + 1;
+   const beforeX = this.start.x - 1;
+   const afterX = this.end.x + 1;
 
 
-   // works
    if (this.start.corner == CORNER_TOP) {
-       game.map[top][before]= BLOCK_CODE;
+       this.addBorder(beforeX,bot);
    }
-   // does not work
-   if (this.end.corner == CORNER_BOT) {
-      game.map[bot][before] = WEAPON_CODE;
-   }
-   // works
+
+   /***
+    *    (*)-------(*)
+    *    |
+    *    |
+    *   (*)
+    */ 
+  /* if (this.end.corner == CORNER_BOT) {
+      game.map[bot][this.start.x] = ENEMY_CODE;
+   }*/
+
    if (this.end.corner == CORNER_TOP) {
-      game.map[top][after]= POTION_CODE;
+      this.addBorder(afterX,top);
    }
-   // does not work
+   /**
+    *        |  |
+    *        |  |
+    *   -----*  |
+    *           |
+    *   -------(*)
+    * 
+    */ 
    if (this.end.corner == CORNER_BOT) {
-      game.map[bot][after] = WALL_CODE;
+      this.addBorder(afterX,bot);
    }
 
 };
+Path.prototype.addBorder = function(x,y) {
+
+   let arr = [FLOOR_CODE,DOOR_CODE,WALL_CODE];
+
+   if (!arr.includes(game.map[y][x])) {
+
+        game.map[y][x] = BORDER_CODE;
+   }
+}
 Path.prototype.addVertBorder = function() {
 
    const {x} = this.start;
    for (let y = this.start.y; y <= this.end.y; ++y) {
       for (let dx of [x-1, x+this.floorSpan]) {
 
-         if (game.map[y][dx] != FLOOR_CODE) {
-            game.map[y][dx] = KEY_CODE;
-         }
+         this.addBorder(dx,y);
       }
    }
    const left = this.start.x - 1;
@@ -176,19 +199,19 @@ Path.prototype.addVertBorder = function() {
 
 
    if (this.start.corner == CORNER_LEFT) {
-      game.map[before][left] = RELIC_CODE;
+      this.addBorder(left,before);
    }
    // not working yet
    if (this.start.corner == CORNER_RIGHT) {
-      game.map[before][right] = WEAPON_CODE;
+      this.addBorder(right,before);
    }
    // works
    if (this.end.corner == CORNER_LEFT) {
-      game.map[after][left] = PLAYER_CODE;
+      this.addBorder(left,after);
    }
    // works but gets obscured by the floor code
    if (this.end.corner == CORNER_RIGHT) {
-      game.map[after][right] = ENEMY_CODE;
+      this.addBorder(right,after);
    }
 
 };

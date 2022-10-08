@@ -58,13 +58,7 @@ Game.prototype.resetMap = function() {
       }
    }
 }
-Game.prototype.addTopWall = function(room) {
 
-   let {start,end} = room;
-   for (let x = start.x; x <= end.x; ++x) {
-      this.map[start.y][x] = WALL_CODE;
-   }
-}
 Game.prototype.addBorder = function(room) {
    let start = {
       x:room.start.x -1,
