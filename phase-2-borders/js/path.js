@@ -31,14 +31,18 @@ Path.prototype.isAdjacentVert = function(testX) {
 
    const x = testX || this.start.x;
 
-   for (var diff of [-1, 1]) {
+   const arr = [FLOOR_CODE,BORDER_CODE,DOOR_CODE];
+
+   let left = x-1;
+   let right =  x+this.floorSpan;
+   for (var checkX of [left,right]) {
 
       let consecutive = 0;
 
       for (var y = this.start.y; y <= this.end.y; ++y) {
 
-         const z = diff * this.floorSpan;
-         if (game.map[y][x + z] == FLOOR_CODE) {
+         const tileCode = game.map[y][checkX];
+         if (arr.includes(tileCode)) {
             consecutive++;
 
             if (consecutive == limit) {
@@ -56,18 +60,22 @@ Path.prototype.isAdjacentVert = function(testX) {
 
 Path.prototype.isAdjacentHoriz = function(testY) {
 
-   const limit = 5;
+   const limit = 4;
 
    const y = testY || this.start.y;
 
-   for (let diff of [-1, 1]) {
+   const arr = [FLOOR_CODE,BORDER_CODE,DOOR_CODE];
+
+   const top = y-1;
+   const bot = y+this.floorSpan;
+   for (let checkY of [top,bot]) {
 
       let consecutive = 0;
 
       for (var x = this.start.x; x <= this.end.x; ++x) {
-         const z = diff*this.floorSpan;
-         if (game.map[y + z] &&
-            game.map[y + diff][x] == FLOOR_CODE) {
+         
+         if (game.map[checkY] &&
+            !arr.includes(game.map[checkY][x])) {
             consecutive++;
 
             if (consecutive == limit) {
@@ -95,12 +103,21 @@ Path.prototype.addHoriz = function() {
    }
 }
 
-Path.prototype.addDoor = function(x,y) {
+Path.prototype.addHalfDoor = function(x,y,z) {
    const doorHeight = 2;
-   for (let i = 0; i < doorHeight; ++i) {
+
+   if (game.map[y + z][x] != DOOR_CODE) {
+     for (let i = 0; i < doorHeight; ++i) {
          game.map[y+i][x] = DOOR_CODE; 
 
+     }
    }
+   else {
+      console.log('another door was in the way...');
+   }
+   /**
+    * @TODO: Add door to game
+    */ 
 }
 Path.prototype.addVert = function() {
    
@@ -109,15 +126,20 @@ Path.prototype.addVert = function() {
    this.addVertBorder();
 
    for (let z = 0; z < this.floorSpan; ++z) {
-
+         const dx = x+z;
          for (let y = this.start.y; y <= this.end.y; ++y) {
-           game.map[y][x+z] = FLOOR_CODE;
+           game.map[y][dx] = FLOOR_CODE;
          }
+         // door logic...
+         const {end,start} = this;
          if (this.doorBot) {
-            this.addDoor(x+z, this.end.y);
+               const check = -1;
+               this.addHalfDoor(dx, end.y,check);
+    
          }
-         else if (this.doorTop) {
-               this.addDoor(x+z,this.start.y)
+         if (this.doorTop) {
+               const check = 2;
+               this.addHalfDoor(dx, start.y,check);
          }
        
    }
@@ -129,8 +151,9 @@ Path.prototype.addHorizBorder = function() {
    for (let x = this.start.x; x <= this.end.x; ++x) {
 
       for (let dy of [y-1,y+this.floorSpan]) {
-          if (game.map[dy][x] != FLOOR_CODE) {
-             game.map[dy][x] = BORDER_CODE;
+
+          if (game.map[dy]) {
+            this.addBorder(x,dy);
           }
       }
    }

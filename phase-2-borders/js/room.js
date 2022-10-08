@@ -14,6 +14,14 @@ class Room {
 
       this.id = null;
 
+      this.paths = {
+         top:0,
+         bot:0,
+         left:0,
+         right:0
+      };
+      this.maxWallDoors = 1;
+
       this.neighbors = [];
    }
 }
@@ -234,7 +242,7 @@ Room.prototype.connectRoom = function(room, min=3) {
 Room.prototype.cornerVert = function(room, corner) {
 
    let vert = new Path(), horiz = new Path();
-
+   let doorPos = null;
       /** If this is above
        * 
        *        this
@@ -242,8 +250,10 @@ Room.prototype.cornerVert = function(room, corner) {
        *         |
        * room ---*--- room 
        */
- 
-      if (this.end.y < room.center.y) {
+      // downHoriz
+
+      if (this.end.y < room.center.y && 
+          this.paths.bot < this.maxWallDoors) {
 
            // draw downwards from MC room's bottom
            vert.start = {
@@ -259,6 +269,7 @@ Room.prototype.cornerVert = function(room, corner) {
             y:corner.y + horiz.floorSpan -1,
             corner: (room.start.x < this.start.x) ? CORNER_RIGHT : CORNER_LEFT
          }
+         doorPos = 'bot';
       }
       /**  
        * else if this is below
@@ -267,7 +278,8 @@ Room.prototype.cornerVert = function(room, corner) {
        *          |
        *         this
        */
-      else if (this.start.y > room.center.y)  {
+      else if (this.start.y > room.center.y &&
+               this.paths.top < this.maxWallDoors)  {
           // Drawing downwards from the other room's vertical center
           vert.start = corner;
           vert.start.corner = (room.start.x < this.start.x) ? CORNER_RIGHT : CORNER_LEFT;
@@ -277,6 +289,8 @@ Room.prototype.cornerVert = function(room, corner) {
             y:this.start.y - 1
          };
           vert.doorBot = true;
+          doorPos = 'top';
+
       }
       else {
           console.log(`Target room${room.id} center x is between MC Room${this.id} start and end; corner connect failed`);
@@ -294,7 +308,8 @@ Room.prototype.cornerVert = function(room, corner) {
        * 
        */
 
-      if (this.center.x < room.start.x) {
+      if (this.center.x < room.start.x && 
+          this.paths.bot < this.maxWallDoors) {
 
          // start horizontal path from corner 
          horiz.start = corner;
@@ -306,6 +321,7 @@ Room.prototype.cornerVert = function(room, corner) {
             x:room.start.x - 1, 
             y:room.center.y + horiz.floorSpan -1
          };
+         doorPos = 'bot';
  
       }
       /**  
@@ -318,10 +334,14 @@ Room.prototype.cornerVert = function(room, corner) {
        *          |
        *         this
        */
-      else if (this.center.x > room.end.x) {
+      else if (this.center.x > room.end.x && 
+               this.paths.top < this.maxWallDoors) {
 
            // Start horizontal path from the room on left.
-           horiz.start = {x:room.end.x + 1, y:room.center.y};
+           horiz.start = {
+            x:room.end.x + 1,
+            y:room.center.y
+         };
 
            // End the horizontal path at this room's center.
            horiz.end = {
@@ -330,17 +350,20 @@ Room.prototype.cornerVert = function(room, corner) {
               // if other room is higher, corner will be on bottom
               corner: (room.end.y < this.start.y) ? CORNER_TOP : CORNER_BOT
            }
+           doorPos = 'top';
      
       }
       else {
            console.log(`Target room${room.id} center x is between MC Room${this.id} start and end; corner connect failed`);
       }
 
-      if (!vert.isAdjacentVert() && 
+      if (doorPos && !vert.isAdjacentVert() && 
           !horiz.isAdjacentHoriz()) {
 
            vert.addVert();
            horiz.addHoriz();
+
+           this.paths[doorPos]++;
 
            this.addNeighbor(room);
       }
@@ -351,7 +374,7 @@ Room.prototype.cornerVert = function(room, corner) {
 Room.prototype.cornerHoriz = function(room, corner) {
 
    let horiz = new Path(), vert = new Path();
-   
+   let doorPos = null;
       /**  
        * 
        * ON LEFT
@@ -375,6 +398,7 @@ Room.prototype.cornerHoriz = function(room, corner) {
             y:corner.y + horiz.floorSpan - 1,
             corner: (room.end.y < this.start.y) ? CORNER_BOT : CORNER_TOP
          };
+
       }
       /**
        * 
@@ -411,7 +435,8 @@ Room.prototype.cornerHoriz = function(room, corner) {
        *          room
        * 
        */ 
-      if (this.center.y < room.start.y) {
+      if (this.center.y < room.start.y &&
+          room.doorPos.top < room.maxWallDoors) {
            vert.start = corner;
            vert.start.corner = (room.end.x < this.start.x) ? CORNER_LEFT : CORNER_RIGHT;
              // end at top center of other room
@@ -421,6 +446,10 @@ Room.prototype.cornerHoriz = function(room, corner) {
             // ending right before the room
             y:room.start.y - 1
            };
+
+           doorPos = 'top';
+
+           // assigning bottom door to paths
            vert.doorBot = true;
     
       }
@@ -432,7 +461,8 @@ Room.prototype.cornerHoriz = function(room, corner) {
        * this-------*-------this
        *           corner
        */
-      else if (this.center.y > room.end.y) {
+      else if (this.center.y > room.end.y &&
+               room.paths.bot < room.maxWallDoors) {
           vert.start = {
             x:room.center.x,
             y:room.end.y + 1
@@ -445,6 +475,7 @@ Room.prototype.cornerHoriz = function(room, corner) {
 
             corner: (room.end.x < this.start.x) ? CORNER_RIGHT : CORNER_LEFT
           };
+          doorPos = 'bot';
           vert.doorTop = true;
       }
       else {
@@ -452,11 +483,15 @@ Room.prototype.cornerHoriz = function(room, corner) {
          return false;
       }
 
-      if (!vert.isAdjacentVert() && 
+      if (doorPos && !vert.isAdjacentVert() && 
           !horiz.isAdjacentHoriz()) {
 
+           // room at top
            vert.addVert();
+
            horiz.addHoriz();
+
+           room.paths[doorPos]++;
 
            this.addNeighbor(room);
       }
@@ -548,10 +583,19 @@ Room.prototype.addVertPath = function(room, path, wall) {
 
    path.end.y = Math.max(this.start.y,room.start.y) - 1;
 
+   if (this.end.y < room.start.y) {
+      this.paths.bot++;
+      room.paths.top++;
+   }
+   else {
+      room.paths.top++;
+      this.paths.bot++;
+   }
    path = this.placePathX(room,path,wall);
  
    if (path.allowed) {
-         
+          
+          // adding two rooms
           path.addVert();
 
           this.addNeighbor(room);
