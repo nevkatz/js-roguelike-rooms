@@ -393,7 +393,7 @@ function generateMapRooms() {
    }
    let success = false;
 
-   const min = 3;
+   const min = 5;
 
    for (var room of game.rooms) {
 

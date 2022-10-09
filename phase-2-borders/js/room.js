@@ -340,23 +340,16 @@ Room.prototype.cornerVert = function(room, corner) {
 
       let horizCode = horiz.isAdjacentHoriz() ? RELIC_CODE : FLOOR_CODE;
 
-     // if (!vert.isAdjacentVert() && 
-     //     !horiz.isAdjacentHoriz()) {
+     if (!vert.isAdjacentVert() && 
+          !horiz.isAdjacentHoriz()) {
 
-           vert.addVert(vertCode);
-           horiz.addHoriz(horizCode);
+           vert.addVert();
+           horiz.addHoriz();
            game.paths.push(horiz,vert);
 
            this.addNeighbor(room);
-     /* }
-      else {
-          vert.addVert(WEAPON_CODE);
-          horiz.addHoriz(WEAPON_CODE);
-          game.paths.push(horiz,vert);
-
-          this.addNeighbor(room);
-
-      }*/
+     }
+   
     
   return this.neighbors.includes(room);
 }
@@ -465,30 +458,21 @@ Room.prototype.cornerHoriz = function(room, corner) {
          return false;
       }
 
-      let vertCode = vert.isAdjacentVert() ? WEAPON_CODE : FLOOR_CODE;
+    //  let vertCode = vert.isAdjacentVert() ? WEAPON_CODE : FLOOR_CODE;
 
-      let horizCode = horiz.isAdjacentHoriz() ? WEAPON_CODE : FLOOR_CODE;
-    //  if (!vert.isAdjacentVert() && 
-        //  !horiz.isAdjacentHoriz()) {
+    //  let horizCode = horiz.isAdjacentHoriz() ? WEAPON_CODE : FLOOR_CODE;
+      if (!vert.isAdjacentVert() && 
+        !horiz.isAdjacentHoriz()) {
 
-           vert.addVert(vertCode);
+           vert.addVert();
 
-           horiz.addHoriz(horizCode);
-
-           this.addNeighbor(room);
-
-           game.paths.push(horiz,vert);
-     /* }
-      else {
-           vert.addVert(WEAPON_CODE);
-
-           horiz.addHoriz(WEAPON_CODE);
+           horiz.addHoriz();
 
            this.addNeighbor(room);
 
            game.paths.push(horiz,vert);
+      }
 
-      }*/
       return this.neighbors.includes(room);
 }
 /**
@@ -537,7 +521,6 @@ Room.prototype.placePathX = function(room,path,wall) {
         path.start.x = x;
         path.end.x = path.start.x + path.floorSpan - 1;
 
-         // add inRoom logic for corners? 
          if (!path.isAdjacentVert(x)) {
                path.allowed = true;
               
@@ -599,14 +582,14 @@ Room.prototype.addVertPath = function(room, path, wall) {
 
           game.paths.push(path);
    }
-   else {
+  /* else {
       path.addVert(RELIC_CODE);
 
           this.addNeighbor(room);
 
           game.paths.push(path);
 
-   }
+   }*/
    return path;
 
 }
@@ -630,14 +613,6 @@ Room.prototype.addHorizPath = function(room, path, wall) {
           this.addNeighbor(room);
 
           game.paths.push(path);
-   }
-   else {
-      path.addHoriz(EMPTY_CODE);
-
-          this.addNeighbor(room);
-
-          game.paths.push(path);
-
    }
    return path;
 
@@ -693,7 +668,7 @@ Room.prototype.nearestNeighbor = function(rooms) {
 
    for (let room of sorted) {
 
-      success = this.connectRoom(room);
+      success = this.connectRoom(room,5);
 
       if (success) { 
          break;

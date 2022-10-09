@@ -27,11 +27,11 @@ class Path {
  */ 
 Path.prototype.isAdjacentVert = function(testX) {
    
-   const limit = 2;
+   const limit = 5;
 
    const x = testX || this.start.x;
 
-   game.map[this.start.y][x] = ENEMY_CODE;
+   //game.map[this.start.y][x] = ENEMY_CODE;
 
    const arr = [FLOOR_CODE];
 
@@ -62,11 +62,11 @@ Path.prototype.isAdjacentVert = function(testX) {
 
 Path.prototype.isAdjacentHoriz = function(testY) {
 
-   const limit = 10;
+   const limit = 5;
 
    const y = testY || this.start.y;
 
-   game.map[y][this.start.x] = RELIC_CODE;
+//   game.map[y][this.start.x] = RELIC_CODE;
 
    const arr = [FLOOR_CODE];
 
