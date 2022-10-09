@@ -27,15 +27,17 @@ class Path {
  */ 
 Path.prototype.isAdjacentVert = function(testX) {
    
-   const limit = 5;
+   const limit = 2;
 
    const x = testX || this.start.x;
 
-   const arr = [FLOOR_CODE,BORDER_CODE,DOOR_CODE];
+   game.map[this.start.y][x] = ENEMY_CODE;
 
-   let left = x-2;
-   let right = x+2;// x+this.floorSpan;
-   for (var checkX of [left,right]) {
+   const arr = [FLOOR_CODE];
+
+   let left = x - 1;
+   let right = x + this.floorSpan;
+   for (let checkX of [left, right]) {
 
       let consecutive = 0;
 
@@ -60,29 +62,39 @@ Path.prototype.isAdjacentVert = function(testX) {
 
 Path.prototype.isAdjacentHoriz = function(testY) {
 
-   const limit = 4;
+   const limit = 10;
 
    const y = testY || this.start.y;
 
-   const arr = [FLOOR_CODE,BORDER_CODE,DOOR_CODE];
+   game.map[y][this.start.x] = RELIC_CODE;
 
-   const top = y-2;
-   const bot = y+2; //y+this.floorSpan;
+   const arr = [FLOOR_CODE];
+
+   const top = y-1;
+   const bot = y+this.floorSpan;
+   console.log('*** new check ***');
    for (let checkY of [top,bot]) {
 
       let consecutive = 0;
-
-      for (var x = this.start.x; x <= this.end.x; ++x) {
+      console.log('==== checkY is '+checkY+' ===');
+      for (var x = this.start.x+1; x < this.end.x; ++x) {
          
+       
+
          if (game.map[checkY] &&
-            !arr.includes(game.map[checkY][x])) {
+            arr.includes(game.map[checkY][x])) {
             consecutive++;
+           console.log(`[isAdjacentHoriz] adj at ${x},${checkY}`);
+
+    
 
             if (consecutive == limit) {
+               console.log('=== limit reached ===');
                return true;
             }
 
          } else {
+            console.log(`[isAdjacentHoriz] fine at ${x},${checkY}`);
             consecutive = 0;
          }
       }
@@ -90,7 +102,7 @@ Path.prototype.isAdjacentHoriz = function(testY) {
    return false;
 }
 
-Path.prototype.addHoriz = function() {
+Path.prototype.addHoriz = function(tileCode) {
    const y = this.start.y;
 
    this.addHorizBorder();
@@ -98,7 +110,7 @@ Path.prototype.addHoriz = function() {
    for (let x = this.start.x; x <= this.end.x; ++x) {
 
          for (let z = 0; z < this.floorSpan; ++z) {
-            game.map[y+z][x] = FLOOR_CODE;
+            game.map[y+z][x] = tileCode || FLOOR_CODE;
          }
    }
 }
@@ -119,7 +131,7 @@ Path.prototype.addHalfDoor = function(x,y,z) {
     * @TODO: Add door to game
     */ 
 }
-Path.prototype.addVert = function() {
+Path.prototype.addVert = function(tileCode) {
    
    const x = this.start.x;
 
@@ -128,7 +140,7 @@ Path.prototype.addVert = function() {
    for (let z = 0; z < this.floorSpan; ++z) {
          const dx = x+z;
          for (let y = this.start.y; y <= this.end.y; ++y) {
-           game.map[y][dx] = FLOOR_CODE;
+           game.map[y][dx] = tileCode || FLOOR_CODE;
          }
          // door logic...
          const {end,start} = this;

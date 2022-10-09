@@ -89,7 +89,7 @@ Room.prototype.findFacingRooms = function(min=1, maxRooms=1) {
           this.sharesCoordsWith(room,'y', min))) {
 
           // changed to direct connect to maximize straight paths...
-          success = this.directConnect(room, min);
+          success = this.connectRoom(room, min);
 
       }
       if (this.neighbors.length >= maxRooms) {
@@ -336,15 +336,27 @@ Room.prototype.cornerVert = function(room, corner) {
       else {
            console.log(`Target room${room.id} center x is between MC Room${this.id} start and end; corner connect failed`);
       }
+       let vertCode = vert.isAdjacentVert() ? RELIC_CODE : FLOOR_CODE;
 
-      //if (!vert.isAdjacentVert() && 
-       //   !horiz.isAdjacentHoriz()) {
+      let horizCode = horiz.isAdjacentHoriz() ? RELIC_CODE : FLOOR_CODE;
 
-           vert.addVert();
-           horiz.addHoriz();
+     // if (!vert.isAdjacentVert() && 
+     //     !horiz.isAdjacentHoriz()) {
+
+           vert.addVert(vertCode);
+           horiz.addHoriz(horizCode);
+           game.paths.push(horiz,vert);
 
            this.addNeighbor(room);
-      //}
+     /* }
+      else {
+          vert.addVert(WEAPON_CODE);
+          horiz.addHoriz(WEAPON_CODE);
+          game.paths.push(horiz,vert);
+
+          this.addNeighbor(room);
+
+      }*/
     
   return this.neighbors.includes(room);
 }
@@ -453,15 +465,30 @@ Room.prototype.cornerHoriz = function(room, corner) {
          return false;
       }
 
+      let vertCode = vert.isAdjacentVert() ? WEAPON_CODE : FLOOR_CODE;
+
+      let horizCode = horiz.isAdjacentHoriz() ? WEAPON_CODE : FLOOR_CODE;
     //  if (!vert.isAdjacentVert() && 
-     //     !horiz.isAdjacentHoriz()) {
+        //  !horiz.isAdjacentHoriz()) {
 
-           vert.addVert(room);
+           vert.addVert(vertCode);
 
-           horiz.addHoriz();
+           horiz.addHoriz(horizCode);
 
            this.addNeighbor(room);
-     // }
+
+           game.paths.push(horiz,vert);
+     /* }
+      else {
+           vert.addVert(WEAPON_CODE);
+
+           horiz.addHoriz(WEAPON_CODE);
+
+           this.addNeighbor(room);
+
+           game.paths.push(horiz,vert);
+
+      }*/
       return this.neighbors.includes(room);
 }
 /**
@@ -506,13 +533,19 @@ Room.prototype.placePathX = function(room,path,wall) {
    let {start, end} = this.possibleExits(room,'x',wall);
 
    for (var x = start; x <= end; ++x) {
+        
+        path.start.x = x;
+        path.end.x = path.start.x + path.floorSpan - 1;
 
          // add inRoom logic for corners? 
          if (!path.isAdjacentVert(x)) {
                path.allowed = true;
-               path.start.x = x;
-               path.end.x = path.start.x + path.floorSpan - 1;
-               break;
+              
+             return path;
+         }
+         else {
+             path.allowed = false;
+
          }
    }
    return path;
@@ -533,12 +566,18 @@ Room.prototype.placePathY = function(room,path,wall) {
 
    for (var y = start; y <= end; ++y) {
 
+         path.start.y = y;
+         path.end.y = path.start.y + path.floorSpan - 1;
+
          if (!path.isAdjacentHoriz(y)) {
                path.allowed = true;
-               path.start.y = y;
-               path.end.y = path.start.y + path.floorSpan - 1;
-               break;
+
+               return path;
          
+         }
+         else {
+            path.allowed = false;
+
          }
    }
 
@@ -557,6 +596,16 @@ Room.prototype.addVertPath = function(room, path, wall) {
           path.addVert();
 
           this.addNeighbor(room);
+
+          game.paths.push(path);
+   }
+   else {
+      path.addVert(RELIC_CODE);
+
+          this.addNeighbor(room);
+
+          game.paths.push(path);
+
    }
    return path;
 
@@ -579,6 +628,16 @@ Room.prototype.addHorizPath = function(room, path, wall) {
           path.addHoriz();
 
           this.addNeighbor(room);
+
+          game.paths.push(path);
+   }
+   else {
+      path.addHoriz(EMPTY_CODE);
+
+          this.addNeighbor(room);
+
+          game.paths.push(path);
+
    }
    return path;
 
