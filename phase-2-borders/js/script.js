@@ -332,11 +332,9 @@ function generateRoom(center, width, height) {
    return room;
 
 }
-
-function createRoom(c) {
-   const genCenterCoord = (maxCells, dim) => {
+function genCenterCoord (roomDim, maxCells, minCells=0) {
       // get limit on either side based on outer limit and a room dimension - width or height
-      let limit = OUTER_LIMIT + Math.round(dim / 2);
+      let limit = OUTER_LIMIT + minCells, Math.round(roomDim / 2);
 
       // get range based on cells in array - limit on either side.
       let range = maxCells - 2 * limit;
@@ -344,6 +342,8 @@ function createRoom(c) {
       // get a random  number within 
       return limit + Math.round(Math.random() * range);
    }
+function createRoom(c) {
+  
    let {
       width,
       height
@@ -358,7 +358,8 @@ function createRoom(c) {
 
    for (var gameRoom of game.rooms) {
 
-      if (room.overlaps(gameRoom, 3)) {
+      const lim = 4;
+      if (room.overlaps(gameRoom, 4)) {
          return null;
       }
 

@@ -145,7 +145,7 @@ Path.prototype.addVert = function(tileCode) {
 Path.prototype.tryDoors = function(x) {
    const {end,start} = this;
    // check for door codes and wall codes
-   const arr = [DOOR_CODE,WALL_CODE];
+   const arr = [DOOR_CODE,WALL_CODE,FLOOR_CODE];
 
    const lt = game.map[start.y][start.x-1];
    const lb = game.map[start.y+1][start.x-1];
