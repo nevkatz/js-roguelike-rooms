@@ -1,6 +1,6 @@
 class Path {
 
-   constructor(doorTop=false, doorBot=false) {
+   constructor(type, doorTop=false, doorBot=false) {
 
       this.start = {
          x: 0,
@@ -19,6 +19,8 @@ class Path {
       this.floorSpan= 2;
 
       this.allowed = false;
+
+      this.type = type;
 
    }
 }
@@ -100,6 +102,7 @@ Path.prototype.isAdjacentHoriz = function(testY) {
 }
 
 Path.prototype.addHoriz = function(tileCode) {
+
    const y = this.start.y;
 
    this.addHorizBorder();
@@ -129,6 +132,7 @@ Path.prototype.addHalfDoor = function(x,y,z) {
     */ 
 }
 Path.prototype.addVert = function(tileCode) {
+
    
    const {x} = this.start;
 
@@ -216,7 +220,7 @@ Path.prototype.addHorizBorder = function() {
    }*/
 
    if (this.end.corner == CORNER_TOP) {
-      this.addBorder(afterX,top);
+      this.addBorder(afterX,top,ENEMY_CODE);
    }
    /**
     *        |  |
@@ -275,3 +279,50 @@ Path.prototype.addVertBorder = function() {
    }
 
 };
+Path.prototype.aligned = function(path,c) {
+   return this.end[c] == path.end[c] || 
+          this.start[c] == path.start[c];
+}
+Path.prototype.nearby = function(path,c) {
+
+   const horizLimit = 3;
+   const vertLimit = 4;
+
+   const limit = c == 'x' ? horizLimit : vertLimit;
+
+   const dist = Math.abs(this.start[c] - path.start[c]) 
+
+   console.log('dist: ' + dist);
+   // if they are identical they are not nearby
+   return this.start[c] != path.start[c] && dist < limit;
+}
+Path.prototype.overlaps = function() {
+
+  /**
+   * @Questions:
+   *  Do we need to identify paths as horizontal or vertical?
+   *  Can two paths have perfectly aligned entrances? 
+   */ 
+
+   for (let path of game.paths) {
+
+      // do horizontal paths start or end at the same place? 
+      // same start.x or end.x
+      // nearby start.y
+
+      if ((this.type == 'horiz' && this.aligned(path,'x') && this.nearby(path,'y')) ||
+      
+      // do vartical paths start or end at the same place? 
+      // same start.y or end.y
+      // nearby start.y
+          (this.type == 'vert' && this.aligned(path,'y') && this.nearby(path,'x'))) {
+
+         console.log(`this path overlaps!`);
+         return true;
+
+
+      }
+
+   }
+   return false;
+}

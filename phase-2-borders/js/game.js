@@ -23,6 +23,9 @@ class Game {
       this.canvas = null;
 
       this.context = null;
+
+      this.debugCanvas = null;
+      this.debugContext = null;
    }
 }
 /**

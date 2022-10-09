@@ -182,16 +182,20 @@ function createDOM() {
    }
    container.appendChild(hud);
 
-   // add canvas
-   let canvas = document.createElement('canvas');
-   canvas.id = 'grid';
+   let layers = ['grid','debug'];
+   
+   for (let layerId of layers) {
+      let canvas = document.createElement('canvas');
+      canvas.id = layerId;
 
+      canvas.height = ROWS * TILE_DIM;
+      canvas.width = COLS * TILE_DIM;
 
+     container.appendChild(canvas);
+   }
+   container.style.width = COLS * TILE_DIM + 'px';
+   container.style.height = ROWS * TILE_DIM + 'px';
 
-   canvas.height = ROWS * TILE_DIM;
-   canvas.width = COLS * TILE_DIM;
-
-   container.appendChild(canvas);
 
    // create the button
    let btn = document.createElement('button');
@@ -219,6 +223,10 @@ function init() {
    game = new Game();
    game.canvas = document.getElementById("grid");
    game.context = game.canvas.getContext("2d");
+
+   game.debugCanvas = document.getElementById("debug");
+   game.debugContext = game.debugCanvas.getContext("2d");
+
    startGame();
    addKeyboardListener();
 
@@ -249,206 +257,6 @@ function startGame() {
    }
 
 }
-function labelRooms() {
-   game.context.fillStyle ='black';
-   game.context.font = '15px Arial';
-   game.rooms.forEach(function(room) {
-
-      let txt = `r${room.id} (${room.start.x},${room.start.y})`;
-
-      game.context.fillText(txt, (room.start.x+1)*TILE_DIM, room.center.y*TILE_DIM);
-   });
-}
-   
-
-/**
- * Randomly generates a set of dimensions.
- * 
- */
-function genDim() {
-   const BASE_DIM = 6;
-   const EXTRA = 5;
-
-   let type = (Math.random() < 0.5) ? 'tall' : 'wide';
-
-   let width, height;
-
-   width = height = BASE_DIM;
-
-   let additional = Math.round(Math.random() * EXTRA);
-
-   if (type == 'tall') {
-      height += additional;
-   } else {
-      width += additional;
-   }
-   return {
-      width,
-      height
-   };
-};
-
-/**
- * 
- * @param {Object} center
- * @param {Number} height
- * @param {Number} width
- * 
- */
-function setRoomCoords(center, width, height) {
-
-
-   let halfW = Math.round(width / 2);
-   let halfH = Math.round(height / 2);
-
-   let start = {
-      x: center.x - halfW,
-      y: center.y - halfH
-   };
-
-   let end = {
-      x: center.x + halfW,
-      y: center.y + halfH
-   };
-
-   return {
-      start,
-      end
-   };
-}
-/**
- * Generates one room based on a center point.
- * @param {Object} center {x,y}
- */
-function generateRoom(center, width, height) {
-
-   // get coordinates based on width and height
-   let { start, end } = setRoomCoords(center, width, height);
-
-   let room = new Room(center, start, end);
-
-   room.id = game.curRoomId;
-
-   return room;
-
-}
-function genCenterCoord (roomDim, maxCells, minCells=0) {
-
-      let min = minCells || OUTER_LIMIT;
-      console.log('min: ' + min);
-      // get limit on either side based on outer limit and a room dimension - width or height
-      let minLimit = min + Math.round(roomDim / 2);
-      let maxLimit = maxCells - OUTER_LIMIT - Math.round(roomDim/2);
-
-      // get range based on cells in array - limit on either side.
-      let range = maxLimit - minLimit;
-
-      // get a random  number within 
-      return minLimit + Math.round(Math.random() * range);
-   }
-function createRoom(xMin, yMin, xMax, yMax, c) {
-  
-   let {
-      width,
-      height
-   } = genDim();
-
-   let coords = c || {
-      x: genCenterCoord(width, xMax, xMin),
-      y: genCenterCoord(height, yMax, yMin)
-   }
-   // debug
-   let {x,y} = coords;
-   console.log(`minimums: ${xMin},${yMin}`);
-   console.log(`coords: ${x},${y}`);
-
-   // end debug
-   let room = generateRoom(coords, width, height);
-
-   for (var gameRoom of game.rooms) {
-
-      const lim = 4;
-      if (room.overlaps(gameRoom, 4)) {
-         return null;
-      }
-
-   }
-
-   game.curRoomId++;
-
-
-   game.addRoom(room);
-   game.addBorder(room);
-   room.addTopWall();
-
-   game.rooms.push(room);
-   return room;
-
-}
-
-/**
- * Generates a series of map rooms
- * 
- */
-
-
-function generateMapRooms() {
-
-   game.resetMap();
-
-   let maxRooms = 10;
-
-   const xMins = [0, COLS/2-1];
-   const yMins = [0, ROWS/2-1];
-   const xMaxes = [COLS/2,COLS];
-   const yMaxes = [ROWS/2,ROWS];
-   let counter = 0;
-   while (game.rooms.length < maxRooms) {
-      console.log('round' + counter);
-      console.log('rooms: ' + game.rooms.length);
-    for (y = 0; y < yMins.length; ++y) {
-      for (x = 0; x < xMins.length; ++x) {
-         const xMin = xMins[x];
-         const yMin = yMins[y];
-         const yMax = yMaxes[y];
-         const xMax = xMaxes[x];
-         console.log(`min: ${xMin},${yMin} max: ${xMax},${yMax}`);
-         createRoom(xMin, yMin, xMax, yMax);
-      }
-    }
-    counter++;
-   }
-
- /*  for (var i = 0; i < maxRooms; ++i) {
-      createRoom(0, 0);
-   }*/
-   let success = false;
-
-   const min = 5;
-
-   for (var room of game.rooms) {
-
-      success = room.findFacingRooms(min);
-
-      success = room.nearestNeighbor();
- 
-   }
-   for (var myRoom of game.rooms) {
-
-     let {numConnected, numDisc} = myRoom.connectRemaining();
-
-     console.log(`Room${myRoom.id} connected ${numConnected} out of ${numDisc} disconnected rooms`);
-   }
-}
-
-function printNeighbors() {
-   for (var room of game.rooms) {
-      let ids = room.neighbors.map(x => x.id);
-
-   }
-}
-
-
 /**
  * @param {Number} quantity - the number of items to generate
  * @param {Number} tileCode - corresponds to a constant, such as POTION_CODE.

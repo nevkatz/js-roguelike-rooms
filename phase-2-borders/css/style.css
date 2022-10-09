@@ -15,11 +15,23 @@
      margin-left: auto;
      margin-right: auto;
      display: block;
+     left:  0px;
+     top:  0px;
+     position:  absolute;
+     z-index:  2;
+     max-width:  100%;
+}
+canvas#debug {
+    background-color:  transparent;
+    pointer-events:  none;
 }
  #container {
      margin-top: 50px;
      text-align: center;
+     position:  relative;
+     margin:  0px auto;
 }
+
 /* stats */
  * {
      color: white;

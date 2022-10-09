@@ -75,7 +75,7 @@ Room.prototype.alignedHoriz = function(room) {
  * @param {Number} min - the minimum number of x or y coordinates facing rooms should share.
  * @param {Number} maxRooms - the maximum # of ooms a room should connect with.
  */ 
-Room.prototype.findFacingRooms = function(min=1, maxRooms=1) {
+Room.prototype.findFacingRooms = function(min=1, maxRooms=4) {
 
    let success = false;
    
@@ -89,6 +89,7 @@ Room.prototype.findFacingRooms = function(min=1, maxRooms=1) {
           this.sharesCoordsWith(room,'y', min))) {
 
           // changed to direct connect to maximize straight paths...
+          console.log(`${this.id} is attempting to connect with ${room.id}`);
           success = this.connectRoom(room, min);
 
       }
@@ -126,8 +127,12 @@ Room.prototype.connectRemaining = function() {
 
    for (var room of unreachable) {
       console.log(`${room.id} is disconnected`);
-
-      let success = room.nearestNeighbor(connectedRooms);
+      const min = 3;
+      let success = room.findFacingRooms(min);
+      
+      if (!success) {
+         success = room.nearestNeighbor(connectedRooms); 
+      } 
 
       if (success) {
          console.log(`${room.id} has been connected`);
@@ -237,7 +242,7 @@ Room.prototype.connectRoom = function(room, min=3) {
 
 Room.prototype.cornerVert = function(room, corner) {
 
-   let vert = new Path(), horiz = new Path();
+   let vert = new Path('vert'), horiz = new Path('horiz');
 
       /** If this is above
        * 
@@ -343,7 +348,8 @@ Room.prototype.cornerVert = function(room, corner) {
 
       let horizCode = horiz.isAdjacentHoriz() ? RELIC_CODE : FLOOR_CODE;
 
-     if (!vert.isAdjacentVert() && 
+     if (!vert.overlaps() && !horiz.overlaps() && 
+          !vert.isAdjacentVert() && 
           !horiz.isAdjacentHoriz()) {
 
            vert.addVert();
@@ -359,7 +365,7 @@ Room.prototype.cornerVert = function(room, corner) {
 
 Room.prototype.cornerHoriz = function(room, corner) {
 
-   let horiz = new Path(), vert = new Path();
+   let horiz = new Path('horiz'), vert = new Path('vert');
    
       /**  
        * 
@@ -464,7 +470,8 @@ Room.prototype.cornerHoriz = function(room, corner) {
     //  let vertCode = vert.isAdjacentVert() ? WEAPON_CODE : FLOOR_CODE;
 
     //  let horizCode = horiz.isAdjacentHoriz() ? WEAPON_CODE : FLOOR_CODE;
-      if (!vert.isAdjacentVert() && 
+      if (!vert.overlaps() && !horiz.overlaps && 
+         !vert.isAdjacentVert() && 
         !horiz.isAdjacentHoriz()) {
 
            vert.addVert();
@@ -524,7 +531,7 @@ Room.prototype.placePathX = function(room,path,wall) {
         path.start.x = x;
         path.end.x = path.start.x + path.floorSpan - 1;
 
-         if (!path.isAdjacentVert(x)) {
+         if (!path.isAdjacentVert(x) && !path.overlaps()) {
                path.allowed = true;
               
              return path;
@@ -555,7 +562,7 @@ Room.prototype.placePathY = function(room,path,wall) {
          path.start.y = y;
          path.end.y = path.start.y + path.floorSpan - 1;
 
-         if (!path.isAdjacentHoriz(y)) {
+         if (!path.isAdjacentHoriz(y) && !path.overlaps()) {
                path.allowed = true;
 
                return path;
@@ -622,16 +629,17 @@ Room.prototype.addHorizPath = function(room, path, wall) {
 }
 Room.prototype.directConnect = function(room, min) {
 
- let path = new Path(true,true);
+ let path = new Path(null,true,true);
  
  const wall = parseInt((min-1)/2);
 
  if (this.sharesCoordsWith(room, 'x', min)) {
    
-
+      path.type = 'vert';
       path = this.addVertPath(room,path,wall);  
  }
  else {
+      path.type = 'horiz';
       path = this.addHorizPath(room,path,wall);
  }
 
