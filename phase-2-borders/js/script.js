@@ -333,16 +333,20 @@ function generateRoom(center, width, height) {
 
 }
 function genCenterCoord (roomDim, maxCells, minCells=0) {
+
+      let min = minCells || OUTER_LIMIT;
+      console.log('min: ' + min);
       // get limit on either side based on outer limit and a room dimension - width or height
-      let limit = OUTER_LIMIT + minCells, Math.round(roomDim / 2);
+      let minLimit = min + Math.round(roomDim / 2);
+      let maxLimit = maxCells - OUTER_LIMIT - Math.round(roomDim/2);
 
       // get range based on cells in array - limit on either side.
-      let range = maxCells - 2 * limit;
+      let range = maxLimit - minLimit;
 
       // get a random  number within 
-      return limit + Math.round(Math.random() * range);
+      return minLimit + Math.round(Math.random() * range);
    }
-function createRoom(c) {
+function createRoom(xMin, yMin, xMax, yMax, c) {
   
    let {
       width,
@@ -350,10 +354,15 @@ function createRoom(c) {
    } = genDim();
 
    let coords = c || {
-      x: genCenterCoord(COLS, width),
-      y: genCenterCoord(ROWS, height)
+      x: genCenterCoord(width, xMax, xMin),
+      y: genCenterCoord(height, yMax, yMin)
    }
+   // debug
+   let {x,y} = coords;
+   console.log(`minimums: ${xMin},${yMin}`);
+   console.log(`coords: ${x},${y}`);
 
+   // end debug
    let room = generateRoom(coords, width, height);
 
    for (var gameRoom of game.rooms) {
@@ -387,11 +396,32 @@ function generateMapRooms() {
 
    game.resetMap();
 
-   let maxRooms = 20;
+   let maxRooms = 10;
 
-   for (var i = 0; i < maxRooms; ++i) {
-      createRoom();
+   const xMins = [0, COLS/2-1];
+   const yMins = [0, ROWS/2-1];
+   const xMaxes = [COLS/2,COLS];
+   const yMaxes = [ROWS/2,ROWS];
+   let counter = 0;
+   while (game.rooms.length < maxRooms) {
+      console.log('round' + counter);
+      console.log('rooms: ' + game.rooms.length);
+    for (y = 0; y < yMins.length; ++y) {
+      for (x = 0; x < xMins.length; ++x) {
+         const xMin = xMins[x];
+         const yMin = yMins[y];
+         const yMax = yMaxes[y];
+         const xMax = xMaxes[x];
+         console.log(`min: ${xMin},${yMin} max: ${xMax},${yMax}`);
+         createRoom(xMin, yMin, xMax, yMax);
+      }
+    }
+    counter++;
    }
+
+ /*  for (var i = 0; i < maxRooms; ++i) {
+      createRoom(0, 0);
+   }*/
    let success = false;
 
    const min = 5;

@@ -85,7 +85,13 @@ Game.prototype.addRoom = function(room) {
    for (let y = room.start.y; y <= room.end.y; ++y) {
       for (let x = room.start.x; x <= room.end.x; ++x) {
 
-         this.map[y][x] = FLOOR_CODE;
+         if (this.map[y]) {
+              this.map[y][x] = FLOOR_CODE;
+         }
+         else {
+            console.log('no row with y coordinate of ' + y);
+         }
+       
       }
    }
 
