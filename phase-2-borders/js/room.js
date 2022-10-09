@@ -133,6 +133,9 @@ Room.prototype.connectRemaining = function() {
          console.log(`${room.id} has been connected`);
          numConnected++;
       }
+      else {
+         console.log(`could not connect ${room.id}`);
+      }
 
     }
     return {numConnected, numDisc:unreachable.length};

@@ -33,7 +33,7 @@ Path.prototype.isAdjacentVert = function(testX) {
 
    //game.map[this.start.y][x] = ENEMY_CODE;
 
-   const arr = [FLOOR_CODE];
+   const arr = [FLOOR_CODE,WALL_CODE,DOOR_CODE];
 
    let left = x - 1;
    let right = x + this.floorSpan;
@@ -68,15 +68,15 @@ Path.prototype.isAdjacentHoriz = function(testY) {
 
 //   game.map[y][this.start.x] = RELIC_CODE;
 
-   const arr = [FLOOR_CODE];
+   const arr = [FLOOR_CODE,WALL_CODE,DOOR_CODE,BORDER_CODE];
 
    const top = y-1;
    const bot = y+this.floorSpan;
-   console.log('*** new check ***');
+
    for (let checkY of [top,bot]) {
 
       let consecutive = 0;
-      console.log('==== checkY is '+checkY+' ===');
+
       for (var x = this.start.x+1; x < this.end.x; ++x) {
          
        
@@ -84,17 +84,14 @@ Path.prototype.isAdjacentHoriz = function(testY) {
          if (game.map[checkY] &&
             arr.includes(game.map[checkY][x])) {
             consecutive++;
-           console.log(`[isAdjacentHoriz] adj at ${x},${checkY}`);
-
-    
-
+  
             if (consecutive == limit) {
-               console.log('=== limit reached ===');
+
                return true;
             }
 
          } else {
-            console.log(`[isAdjacentHoriz] fine at ${x},${checkY}`);
+
             consecutive = 0;
          }
       }
@@ -117,7 +114,7 @@ Path.prototype.addHoriz = function(tileCode) {
 
 Path.prototype.addHalfDoor = function(x,y,z) {
    const doorHeight = 2;
-
+   
    if (game.map[y + z][x] != DOOR_CODE) {
      for (let i = 0; i < doorHeight; ++i) {
          game.map[y+i][x] = DOOR_CODE; 
@@ -133,7 +130,7 @@ Path.prototype.addHalfDoor = function(x,y,z) {
 }
 Path.prototype.addVert = function(tileCode) {
    
-   const x = this.start.x;
+   const {x} = this.start;
 
    this.addVertBorder();
 
@@ -142,9 +139,29 @@ Path.prototype.addVert = function(tileCode) {
          for (let y = this.start.y; y <= this.end.y; ++y) {
            game.map[y][dx] = tileCode || FLOOR_CODE;
          }
-         // door logic...
-         const {end,start} = this;
-         if (this.doorBot) {
+   }
+   this.tryDoors(x);
+}
+Path.prototype.tryDoors = function(x) {
+   const {end,start} = this;
+   // check for door codes and wall codes
+   const arr = [DOOR_CODE,WALL_CODE];
+
+   const lt = game.map[start.y][start.x-1];
+   const lb = game.map[start.y+1][start.x-1];
+   const rt = game.map[start.y][end.x +1];
+   const rb = game.map[start.y+1][end.x+1];
+
+   const nearbyTiles = [lt,lb,rt,rb];
+
+   const blocker = nearbyTiles.find(x => arr.includes(x));
+
+   if (!blocker) { 
+
+     for (let z = 0; z < this.floorSpan; ++z) {  
+         const dx = x+z; 
+
+         if (this.doorBot && game.map[end.y]) {
                const check = -1;
                this.addHalfDoor(dx, end.y,check);
     
@@ -154,8 +171,12 @@ Path.prototype.addVert = function(tileCode) {
                this.addHalfDoor(dx, start.y,check);
          }
        
+     }
    }
 }
+/**
+ * @TODO: Add row of wall tiles
+ */ 
 Path.prototype.addHorizBorder = function() {
    
    const {y} = this.start;
@@ -164,21 +185,23 @@ Path.prototype.addHorizBorder = function() {
 
    for (let x = this.start.x; x <= this.end.x; ++x) {
 
-      for (let dy of [y-1,y+this.floorSpan]) {
-
-          if (game.map[dy]) {
+      for (let dy of [y-2,y+this.floorSpan]) {
             this.addBorder(x,dy);
-          }
       }
+      // add the wall
+      this.addBorder(x,y-1,WALL_CODE);
    }
 
-   const top = this.start.y - 1;
+   const top = this.start.y - 2;
    const bot = this.end.y + 1;
    const beforeX = this.start.x - 1;
    const afterX = this.end.x + 1;
 
-
    if (this.start.corner == CORNER_TOP) {
+       this.addBorder(beforeX,top);
+   }
+   // used? 
+    if (this.start.corner == CORNER_BOT) {
        this.addBorder(beforeX,bot);
    }
 
@@ -208,13 +231,13 @@ Path.prototype.addHorizBorder = function() {
    }
 
 };
-Path.prototype.addBorder = function(x,y) {
+Path.prototype.addBorder = function(x, y, tileCode) {
 
    let arr = [FLOOR_CODE,DOOR_CODE,WALL_CODE];
 
-   if (!arr.includes(game.map[y][x])) {
+   if (game.map[y] && !arr.includes(game.map[y][x])) {
 
-        game.map[y][x] = BORDER_CODE;
+        game.map[y][x] = tileCode != undefined ? tileCode : BORDER_CODE;
    }
 }
 Path.prototype.addVertBorder = function() {
@@ -231,7 +254,7 @@ Path.prototype.addVertBorder = function() {
 
    const before = this.start.y - 1;
    // this seems correct.
-   const after = this.end.y;
+   const after = this.end.y +1;
   // const afterFar = this.end.y + this.floorSpan + 1;
 
 
