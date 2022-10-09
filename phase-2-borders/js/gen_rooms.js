@@ -194,7 +194,7 @@ function fillEnclosed() {
          if (game.map[y][x] == EMPTY_CODE &&
              isEnclosed({x,y})) {
 
-            game.map[y][x] = WALL_CODE;
+            game.map[y][x] = FLOOR_CODE;
          }
       }
    }
@@ -204,8 +204,28 @@ function isEnclosed(p){
    let rightBorderX = null;
 
    if (game.map[p.y][p.x] == EMPTY_CODE) {
-        const borderLeft = (x,y)=>{
+        /*const borderLeft = (x,y)=>{
          return x > game.map[y].indexOf(BORDER_CODE);
+        }*/
+        const borderLeft = (x,y) => {
+
+
+         if (x > game.map[y].indexOf(BORDER_CODE)) {
+            // iterate through cells on left
+            for (let dx = x; dx >= 0; --dx) {
+               if (!borderAbove(dx,y) || 
+                   !borderBelow(dx,y)) {
+                  return false;
+               }
+               // you have to get to a border code
+               // before you detect an opening...
+               if (game.map[y][dx] == BORDER_CODE) {
+                  return true;
+               }
+            }
+           }
+           return false;
+         
         }
         // is there a border tile directly above? 
         const hasBorderAtX = (row,x) => {
@@ -235,13 +255,13 @@ function isEnclosed(p){
          return false;
 
         }
-        const checkRight = () => {
-          for (let x = p.x+1; x < COLS; ++x) {
+        const checkRight = ({x,y}) => {
+          for (let dx = x+1; dx < COLS; ++dx) {
 
-             if (borderAbove(x, p.y) &&
-                 borderBelow(x, p.y)) {
+             if (borderAbove(dx, y) &&
+                 borderBelow(dx, y)) {
 
-                 if (game.map[p.y][x] == BORDER_CODE) {
+                 if (game.map[y][dx] == BORDER_CODE) {
                     return true;
                  }
 
@@ -252,13 +272,13 @@ function isEnclosed(p){
           } // end loop
            return false;
         };
-       const checkLeft = () => {
-          for (let x = p.x-1; x >=0; --x) {
+       const checkLeft = ({x,y}) => {
+          for (let dx = x-1; dx >=0; --dx) {
 
-             if (borderAbove(x, p.y) &&
-                 borderBelow(x, p.y)) {
+             if (borderAbove(dx, y) &&
+                 borderBelow(dx, y)) {
 
-                 if (game.map[p.y][x] == BORDER_CODE) {
+                 if (game.map[y][dx] == BORDER_CODE) {
                     // game.map[p.y][x] = ENEMY_CODE;
                     return true;
                  }
@@ -270,13 +290,13 @@ function isEnclosed(p){
           } // end loop
            return false;
         };
-        const checkAbove = () => {
-          for (let y = p.y-1; y >=0; --y) {
+        const checkAbove = ({x,y}) => {
+          for (let dy = y-1; dy >=0; --dy) {
 
-             if (borderLeft(p.x, y) &&
-                 borderRight(p.x, y)) {
+             if (borderLeft(x, dy) &&
+                 borderRight(x, dy)) {
 
-                 if (game.map[y][p.x] == BORDER_CODE) {
+                 if (game.map[dy][x] == BORDER_CODE) {
                     return true;
                  }
              }
@@ -286,13 +306,14 @@ function isEnclosed(p){
           } // end loop
           return false;
         };
-         const checkBelow = () => {
-          for (let y = p.y+1; y <= ROWS; ++y) {
+         const checkBelow = ({x,y}) => {
+ 
+          for (let dy = y+1; dy <= ROWS; ++dy) {
 
-             if (borderLeft(p.x, y) &&
-                 borderRight(p.x, y)) {
+             if (borderLeft(x, dy) &&
+                 borderRight(x, dy)) {
 
-                 if (game.map[y][p.x] == BORDER_CODE) {
+                 if (game.map[dy][x] == BORDER_CODE) {
                     return true;
                  }
              }
@@ -303,10 +324,10 @@ function isEnclosed(p){
           return false;
         };
 
-        return checkLeft() && 
-               checkRight() && 
-               checkBelow() && 
-               checkAbove();
+        return checkLeft(p) && 
+               checkRight(p) && 
+               checkBelow(p) && 
+               checkAbove(p);
 
    }
  
