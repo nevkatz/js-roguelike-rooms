@@ -40,7 +40,6 @@ function labelPaths() {
       const y = TILE_DIM*Math.round(path.start.y + path.end.y)/2;
 
       let txt = `p${path.id}`;
-      console.log('filling ')
 
       ctx.fillText(txt, x,y);
    });

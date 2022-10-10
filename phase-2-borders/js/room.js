@@ -77,7 +77,7 @@ Room.prototype.alignedHoriz = function(room) {
  * @param {Number} min - the minimum number of x or y coordinates facing rooms should share.
  * @param {Number} maxRooms - the maximum # of ooms a room should connect with.
  */ 
-Room.prototype.findFacingRooms = function(min=1, maxRooms=1) {
+Room.prototype.findFacingRooms = function(min=1, maxRooms=4) {
 
    let success = false;
    
@@ -91,7 +91,7 @@ Room.prototype.findFacingRooms = function(min=1, maxRooms=1) {
           this.sharesCoordsWith(room,'y', min))) {
 
           // changed to direct connect to maximize straight paths...
-          console.log(`${this.id} is attempting to connect with ${room.id}`);
+        //  console.log(`${this.id} is attempting to connect with ${room.id}`);
           success = this.connectRoom(room, min);
 
       }
@@ -258,7 +258,7 @@ Room.prototype.connectRoom = function(room, min=3) {
 
    }
    
-  /* if (!success) {
+   if (!success) {
       // if we add doorTiles logic we need to mix in the inRoom
       // so it can'b be adjacent and it can't be in a room.
 
@@ -285,7 +285,7 @@ Room.prototype.connectRoom = function(room, min=3) {
         // success = this.cornerHoriz(room, horizCorner);
       }
       
-   }*/
+   }
 
    return success;
 }

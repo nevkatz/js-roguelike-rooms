@@ -207,10 +207,12 @@ Path.prototype.addHorizBorder = function() {
 
    if (this.start.corner == CORNER_TOP) {
        this.addBorder(beforeX,top);
+       // debugTile(beforeX,top,PLAYER_CODE);
    }
    // used? 
     if (this.start.corner == CORNER_BOT) {
        this.addBorder(beforeX,bot);
+     // debugTile(beforeX,bot,POTION_CODE);
    }
 
    /***
@@ -224,7 +226,7 @@ Path.prototype.addHorizBorder = function() {
    }*/
 
    if (this.end.corner == CORNER_TOP) {
-      debugTile(afterX,top,ENEMY_CODE);
+     // debugTile(afterX,top,ENEMY_CODE);
       this.addBorder(afterX,top);
    }
    /**
@@ -237,7 +239,7 @@ Path.prototype.addHorizBorder = function() {
     */ 
    if (this.end.corner == CORNER_BOT) {
       this.addBorder(afterX,bot);
-      debugTile(afterX,top,POTION_CODE);
+     // debugTile(afterX,bot,POTION_CODE);
    }
 
 };
@@ -270,18 +272,23 @@ Path.prototype.addVertBorder = function() {
 
    if (this.start.corner == CORNER_LEFT) {
       this.addBorder(left,before);
+      //debugTile(left,before,BLOCK_CODE);
    }
    // not working yet
    if (this.start.corner == CORNER_RIGHT) {
       this.addBorder(right,before);
+      this.addBorder(right,before-1);
+      //debugTile(right,before-1,RELIC_CODE);
    }
    // works
    if (this.end.corner == CORNER_LEFT) {
       this.addBorder(left,after);
+      // debugTile(left,after,KEY_CODE);
    }
    // works but gets obscured by the floor code
    if (this.end.corner == CORNER_RIGHT) {
       this.addBorder(right,after);
+     //   debugTile(right,after,PASSAGE_CODE);
    }
 
 };
@@ -298,7 +305,6 @@ Path.prototype.nearby = function(path,c) {
 
    const dist = Math.abs(this.start[c] - path.start[c]) 
 
-   console.log('dist: ' + dist);
    // if they are identical they are not nearby
    return this.start[c] != path.start[c] && dist < limit;
 }
@@ -323,7 +329,6 @@ Path.prototype.overlaps = function() {
       // nearby start.y
           (this.type == 'vert' && this.aligned(path,'y') && this.nearby(path,'x'))) {
 
-         console.log(`this path overlaps!`);
          return true;
 
 

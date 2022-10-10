@@ -59,7 +59,7 @@ function generateMapRooms() {
 
      let {numConnected, numDisc} = myRoom.connectRemaining();
 
-     console.log(`Room${myRoom.id} connected ${numConnected} out of ${numDisc} disconnected rooms`);
+     //console.log(`Room${myRoom.id} connected ${numConnected} out of ${numDisc} disconnected rooms`);
    }
    scanTiles();
 }
@@ -200,11 +200,15 @@ function scanTiles() {
 }
 function checkTopBorder(x,y) {
 
-   if (game.map && game.map[y][x] == DOOR_CODE &&
+   const arr = [DOOR_CODE,WALL_CODE];
+
+   if (game.map && arr.includes(game.map[y][x]) &&
       game.map[y-1][x] == FLOOR_CODE &&
       game.map[y+1][x] == FLOOR_CODE) {
 
-      game.map[y][x] = BLOCK_CODE;
+      console.log('replacing door code or wall code with floor code')
+
+      game.map[y][x] = FLOOR_CODE;
    }
 }
 function checkEnclosed(x,y) {
@@ -235,7 +239,7 @@ function backFillEmpty(x,y) {
    }
 }
 function fill(x,y,oldCodes,newCode) {
-   console.log(`fill: ${x},${y}`);
+
    game.map[y][x] = newCode;
 
    let left = {x:x-1,y};
@@ -260,7 +264,7 @@ function fill(x,y,oldCodes,newCode) {
    }
 }
 function fillEmpty(x,y) {
-   console.log(`fill: ${x},${y}`);
+
    const oldCodes = [FLOOR_CODE,WALL_CODE,SOLID_CODE]
    game.map[y][x] = EMPTY_CODE;
 
@@ -385,7 +389,6 @@ function isEnclosed(p){
     
 
          const checkBelow = () => {
-            console.log('checkBelow');
           for (let y = p.y+1; y <= ROWS - OUTER_LIMIT; ++y) {
 
              if (borderLeft(p.x, y) &&
@@ -410,7 +413,7 @@ function isEnclosed(p){
        
          const oldCodes = [FLOOR_CODE,WALL_CODE,SOLID_CODE]
           if (oldCodes.includes(game.map[y][x])) {
-             console.log('about to start fill process');
+            // console.log('about to start fill process');
              fillEmpty(x,y);
 
             // debugTile(x,y,tileCode);

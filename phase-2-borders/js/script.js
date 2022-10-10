@@ -30,6 +30,9 @@ const EMPTY_CODE = 8;
 const BLOCK_CODE = 9;
 const RELIC_CODE = 10;
 const SOLID_CODE = 11;
+const KEY_CODE = 12;
+const PASSAGE_CODE = 13;
+
 
 const SOLIDS = [WALL_CODE, BORDER_CODE, EMPTY_CODE, BLOCK_CODE];
 const POTIONS = [10, 20, 30, 40, 50];
@@ -80,8 +83,12 @@ const TILE_COLORS = [
    '#f06d06',
    // relic
    'dodgerblue',
-   //
-   '#e4e4e4'
+   // solid
+   '#e4e4e4',
+   //key
+   'maroon',
+   // passage
+   'brown'
 ];
 
 
@@ -253,8 +260,8 @@ function startGame() {
      //  generateEnemies(TOTAL_ENEMIES);
       drawMap(0, 0, COLS, ROWS);
       updateStats();
-       labelRooms();
-       labelPaths();
+     //  labelRooms();
+     //  labelPaths();
    }
 
 }
