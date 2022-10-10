@@ -204,12 +204,35 @@ function fillEnclosed() {
       }
    }
 }
+function fill(x,y,oldCode,newCode) {
+   console.log(`fill: ${x},${y}`);
+   game.map[y][x] = newCode;
+
+   let left = {x:x-1,y};
+   let top = {x,y:y-1};
+   let right = {x:x+1,y};
+   let bot = {x,y:y+1};
+
+   let arr = [top,left,right,bot];
+
+   for (let point of arr) {
+         const {x,y} = point;
+         let tileCode = game.map[y][x];
+
+         if (tileCode == oldCode) {
+            fill(x,y,oldCode,newCode);
+         }
+     
+   }
+}
 function isEnclosed(p){
 
    let rightBorderX = null;
 
    if (game.map[p.y][p.x] == EMPTY_CODE) {
+
         const borderLeft = (x,y)=>{
+         console.log(`[borderLeft] x: ${x} y: ${y}`);
          return x > game.map[y].indexOf(BORDER_CODE);
         }
         // is there a border tile directly above? 
@@ -221,7 +244,7 @@ function isEnclosed(p){
          return y > idx;
         }
         const borderRight = (x,y) =>{
-          for (let dx = x+1; dx < COLS; ++dx) {
+          for (let dx = x+1; dx < COLS - OUTER_LIMIT; ++dx) {
 
              if (game.map[y][dx]==BORDER_CODE) {
                rightBorderX = dx;
@@ -231,7 +254,7 @@ function isEnclosed(p){
           return false;
         }
         const borderBelow=(x,y) => {
-         for (let dy = y+1; dy < ROWS; ++dy) {
+         for (let dy = y+1; dy < ROWS - OUTER_LIMIT; ++dy) {
             if (game.map[dy][x] == BORDER_CODE) {
                return true; //rightBelowConnect(x,dy);
             }
@@ -241,7 +264,7 @@ function isEnclosed(p){
 
         }
         const checkRight = () => {
-          for (let x = p.x+1; x < COLS; ++x) {
+          for (let x = p.x+1; x < COLS - OUTER_LIMIT; ++x) {
 
              if (borderAbove(x, p.y) &&
                  borderBelow(x, p.y)) {
@@ -251,14 +274,11 @@ function isEnclosed(p){
                  }
 
              }
-             else {
-               return false;
-             }
           } // end loop
            return false;
         };
        const checkLeft = () => {
-          for (let x = p.x-1; x >=0; --x) {
+          for (let x = p.x-1; x >= OUTER_LIMIT; --x) {
 
              if (borderAbove(x, p.y) &&
                  borderBelow(x, p.y)) {
@@ -269,14 +289,12 @@ function isEnclosed(p){
                  }
 
              }
-             else {
-               return false;
-             }
           } // end loop
-           return false;
+ 
+         return false;
         };
         const checkAbove = () => {
-          for (let y = p.y-1; y >=0; --y) {
+          for (let y = p.y-1; y >=OUTER_LIMIT; --y) {
 
              if (borderLeft(p.x, y) &&
                  borderRight(p.x, y)) {
@@ -285,14 +303,16 @@ function isEnclosed(p){
                     return true;
                  }
              }
-             else {
-               return false;
-             }
+            
           } // end loop
+ 
           return false;
         };
+    
+
          const checkBelow = () => {
-          for (let y = p.y+1; y <= ROWS; ++y) {
+            console.log('checkBelow');
+          for (let y = p.y+1; y <= ROWS - OUTER_LIMIT; ++y) {
 
              if (borderLeft(p.x, y) &&
                  borderRight(p.x, y)) {
@@ -301,17 +321,34 @@ function isEnclosed(p){
                     return true;
                  }
              }
-             else {
-               return false;
-             }
           } // end loop
+  
           return false;
         };
+        const tryErase =(p) => {
+          eraseCheck(p.x-1,p.y, ENEMY_CODE);
+          eraseCheck(p.x,p.y-1, RELIC_CODE);
 
-        return checkLeft() && 
+        }
+        const eraseCheck =(x,y,tileCode) => {
+         console.log('erase check');
+          if (game.map[y][x] == FLOOR_CODE) {
+             console.log('about to start fill process');
+             fill(x,y,FLOOR_CODE,EMPTY_CODE);
+
+             debugTile(x,y,tileCode);
+          }
+        }
+
+        let clear = checkLeft() && 
                checkRight() && 
                checkBelow() && 
                checkAbove();
+
+        if (!clear) {
+           tryErase(p);
+        }
+        return clear;
 
    }
  

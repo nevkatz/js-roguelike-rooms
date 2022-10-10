@@ -31,3 +31,12 @@ function labelRooms() {
    });
 }
    
+function debugTile(x, y, c_idx) {
+    let color = TILE_COLORS[c_idx]
+    let ctx = game.debugContext;
+   //  game.context.clearRect(x * 10, y * 10, 10, 10);
+   ctx.beginPath();
+   ctx.rect(x * TILE_DIM, y * TILE_DIM, TILE_DIM, TILE_DIM);
+   ctx.fillStyle = color;
+   ctx.fill();
+}

@@ -220,7 +220,7 @@ Path.prototype.addHorizBorder = function() {
    }*/
 
    if (this.end.corner == CORNER_TOP) {
-      this.addBorder(afterX,top,ENEMY_CODE);
+      this.addBorder(afterX,top);
    }
    /**
     *        |  |
