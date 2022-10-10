@@ -29,7 +29,7 @@ const DOOR_CODE = 7;
 const EMPTY_CODE = 8;
 const BLOCK_CODE = 9;
 const RELIC_CODE = 10;
-const KEY_CODE = 11;
+const SOLID_CODE = 11;
 
 const SOLIDS = [WALL_CODE, BORDER_CODE, EMPTY_CODE, BLOCK_CODE];
 const POTIONS = [10, 20, 30, 40, 50];
@@ -81,7 +81,7 @@ const TILE_COLORS = [
    // relic
    'dodgerblue',
    //
-   'maroon'
+   'pink'
 ];
 
 

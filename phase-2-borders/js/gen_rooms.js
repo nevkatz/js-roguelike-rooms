@@ -203,13 +203,7 @@ function fillEnclosed() {
                  game.map[y][x] = (tileAbove == BORDER_CODE) ? WALL_CODE : FLOOR_CODE;
             }
             else {
-              const oldCodes = [FLOOR_CODE,WALL_CODE];
-              if (game.map[y-1][x] == EMPTY_CODE) {
-                 fill(x,y-1,oldCodes,EMPTY_CODE)
-              }
-              if (game.map[y][x-1] == EMPTY_CODE) {
-                 fill(x-1,y,oldCodes,EMPTY_CODE);
-              }
+              backFill(x,y);
             }
           
          }
@@ -217,6 +211,16 @@ function fillEnclosed() {
       } // end inner loop
    } // end outer loop
    //fillMore(OUTER_LIMIT,OUTER_LIMIT,BORDER_CODE,EMPTY_CODE);
+}
+function backFill(x,y) {
+   const oldCodes = [FLOOR_CODE,WALL_CODE];
+   if (game.map[y-1][x] == EMPTY_CODE) {
+         fill(x,y-1,oldCodes,EMPTY_CODE)
+   }
+   if (game.map[y][x-1] == EMPTY_CODE) {
+         fill(x-1,y,oldCodes,EMPTY_CODE);
+   }
+
 }
 function fill(x,y,oldCodes,newCode) {
    console.log(`fill: ${x},${y}`);
