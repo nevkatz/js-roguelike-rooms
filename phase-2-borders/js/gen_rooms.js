@@ -133,7 +133,7 @@ function createRoom(xMin, yMin, xMax, yMax, quadrant,c) {
       }
 
    }
-
+   // if room survives, augment room id.
    game.curRoomId++;
 
 
@@ -199,7 +199,7 @@ function scanTiles() {
    //fillMore(OUTER_LIMIT,OUTER_LIMIT,BORDER_CODE,EMPTY_CODE);
 }
 function checkTopBorder(x,y) {
-   console.log(`checkTopBorder at ${x},${y}`);
+
    if (game.map && game.map[y][x] == DOOR_CODE &&
       game.map[y-1][x] == FLOOR_CODE &&
       game.map[y+1][x] == FLOOR_CODE) {

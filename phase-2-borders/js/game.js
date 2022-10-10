@@ -13,6 +13,7 @@ class Game {
       this.rooms = [];
       this.paths = [];
       this.curRoomId = 0;
+      this.curPathId = 0;
 
       this.map = [];
       this.shadow = [];

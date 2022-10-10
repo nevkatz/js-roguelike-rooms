@@ -15,6 +15,8 @@ class Room {
       this.id = null;
 
       this.neighbors = [];
+
+      this.paths = [];
    }
 }
 
@@ -75,7 +77,7 @@ Room.prototype.alignedHoriz = function(room) {
  * @param {Number} min - the minimum number of x or y coordinates facing rooms should share.
  * @param {Number} maxRooms - the maximum # of ooms a room should connect with.
  */ 
-Room.prototype.findFacingRooms = function(min=1, maxRooms=4) {
+Room.prototype.findFacingRooms = function(min=1, maxRooms=1) {
 
    let success = false;
    
@@ -91,6 +93,46 @@ Room.prototype.findFacingRooms = function(min=1, maxRooms=4) {
           // changed to direct connect to maximize straight paths...
           console.log(`${this.id} is attempting to connect with ${room.id}`);
           success = this.connectRoom(room, min);
+
+      }
+      if (this.neighbors.length >= maxRooms) {
+         break;
+      }
+   }
+ 
+   return success;
+}
+/**
+ * @param {Number} min - the minimum number of x or y coordinates facing rooms should share.
+ * @param {Number} maxRooms - the maximum # of ooms a room should connect with.
+ */ 
+Room.prototype.findFacingPaths = function(min=1, maxRooms=1) {
+
+   let success = false;
+
+   let newPaths = game.paths.filter(path => !this.paths.includes(path));
+
+   for (let path of newPaths) {
+
+      if (!this.roomBetween(path) && 
+
+         (this.sharesCoordsWith(path,'x', min) || 
+          this.sharesCoordsWith(path,'y', min))) {
+
+          // changed to direct connect to maximize straight paths...
+          console.log(`${this.id} is attempting to connect with path ${path.id}`);
+          success = this.directConnect(path, min);
+
+          if (success) {
+            console.log(`${this.id} successfully connected with path ${path.id}`);
+            this.paths.push(path);
+            debugTile(path.start.x,path.start.y,BLOCK_CODE)
+            debugTile(path.start.x,path.end.y,BLOCK_CODE);;
+
+            debugTile(path.end.x,path.start.y,BLOCK_CODE);
+            debugTile(path.end.x,path.end.y,BLOCK_CODE);
+
+          }
 
       }
       if (this.neighbors.length >= maxRooms) {
@@ -133,6 +175,9 @@ Room.prototype.connectRemaining = function() {
       if (!success) {
          success = room.nearestNeighbor(connectedRooms); 
       } 
+      if (!success) {
+         success = room.findFacingPaths();
+      }
 
       if (success) {
          console.log(`${room.id} has been connected`);
@@ -162,16 +207,16 @@ Room.prototype.betweenHoriz = function(room1,room2) {
          this.sharesCoordsWith(room2,'y') &&
          room1.sharesCoordsWith(room2,'y') &&
 
-          ((this.center.x > room1.center.x && this.center.x < room2.center.x) ||
-          (this.center.x > room2.center.x && this.center.x < room1.center.x));
+          ((this.start.x > room1.end.x && this.end.x < room2.start.x) ||
+          (this.start.x > room2.end.x && this.end.x < room1.start.x));
 }
 Room.prototype.betweenVert = function(room1,room2) {
 
    return this.sharesCoordsWith(room1,'x') && 
            this.sharesCoordsWith(room2,'x') &&
            room1.sharesCoordsWith(room2,'x') &&
-         ((this.center.y > room1.center.y && this.center.y < room2.center.y) ||
-          (this.center.y > room2.center.y && this.center.y < room1.center.y));
+         ((this.start.y > room1.end.y && this.end.y < room2.start.y) ||
+          (this.start.y > room2.end.y && this.end.y < room1.start.y));
 
 }
 
@@ -188,9 +233,14 @@ Room.prototype.roomBetween = function(room) {
    return false;
 }
 Room.prototype.addNeighbor = function(room) {
-   this.neighbors.push(room);
-   room.neighbors.push(this);
+
+   if (room.constructor.name == 'Room') {
+       this.neighbors.push(room);
+       room.neighbors.push(this);
+   }
+
 }
+  
 /**
  * 
  * @param {Number} room - the other room object
@@ -208,7 +258,7 @@ Room.prototype.connectRoom = function(room, min=3) {
 
    }
    
-   if (!success) {
+  /* if (!success) {
       // if we add doorTiles logic we need to mix in the inRoom
       // so it can'b be adjacent and it can't be in a room.
 
@@ -235,7 +285,7 @@ Room.prototype.connectRoom = function(room, min=3) {
         // success = this.cornerHoriz(room, horizCorner);
       }
       
-   }
+   }*/
 
    return success;
 }
@@ -344,23 +394,33 @@ Room.prototype.cornerVert = function(room, corner) {
       else {
            console.log(`Target room${room.id} center x is between MC Room${this.id} start and end; corner connect failed`);
       }
-       let vertCode = vert.isAdjacentVert() ? RELIC_CODE : FLOOR_CODE;
 
-      let horizCode = horiz.isAdjacentHoriz() ? RELIC_CODE : FLOOR_CODE;
 
-     if (!vert.overlaps() && !horiz.overlaps() && 
+      this.cornerFinalCheck(room,horiz,vert);
+   
+    
+  return this.neighbors.includes(room);
+}
+Room.prototype.cornerFinalCheck = function(room,horiz,vert) {
+
+   let vertCode = vert.isAdjacentVert() ? RELIC_CODE : FLOOR_CODE;
+   let horizCode = horiz.isAdjacentHoriz() ? RELIC_CODE : FLOOR_CODE;
+   
+   if (!vert.overlaps() && !horiz.overlaps() && 
           !vert.isAdjacentVert() && 
           !horiz.isAdjacentHoriz()) {
 
            vert.addVert();
            horiz.addHoriz();
+
            game.paths.push(horiz,vert);
+           this.paths.push(horiz,vert);
+           room.paths.push(horiz,vert);
+
 
            this.addNeighbor(room);
      }
-   
-    
-  return this.neighbors.includes(room);
+
 }
 
 Room.prototype.cornerHoriz = function(room, corner) {
@@ -467,21 +527,7 @@ Room.prototype.cornerHoriz = function(room, corner) {
          return false;
       }
 
-    //  let vertCode = vert.isAdjacentVert() ? WEAPON_CODE : FLOOR_CODE;
-
-    //  let horizCode = horiz.isAdjacentHoriz() ? WEAPON_CODE : FLOOR_CODE;
-      if (!vert.overlaps() && !horiz.overlaps && 
-         !vert.isAdjacentVert() && 
-        !horiz.isAdjacentHoriz()) {
-
-           vert.addVert();
-
-           horiz.addHoriz();
-
-           this.addNeighbor(room);
-
-           game.paths.push(horiz,vert);
-      }
+      this.cornerFinalCheck(room,horiz,vert);
 
       return this.neighbors.includes(room);
 }
@@ -588,9 +634,16 @@ Room.prototype.addVertPath = function(room, path, wall) {
          
           path.addVert();
 
+
           this.addNeighbor(room);
 
           game.paths.push(path);
+          this.paths.push(path);
+
+           if (room.constructor.name == 'Room') {
+               room.paths.push(path);
+           }
+     
    }
   /* else {
       path.addVert(RELIC_CODE);
@@ -623,6 +676,11 @@ Room.prototype.addHorizPath = function(room, path, wall) {
           this.addNeighbor(room);
 
           game.paths.push(path);
+          this.paths.push(path);
+
+          if (room.constructor.name == 'Room') {
+               room.paths.push(path);
+          }
    }
    return path;
 

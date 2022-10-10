@@ -30,6 +30,22 @@ function labelRooms() {
       ctx.fillText(txt, (room.start.x+1)*TILE_DIM, room.center.y*TILE_DIM);
    });
 }
+
+function labelPaths() {
+   let ctx = game.debugContext;
+   ctx.fillStyle ='blue';
+   ctx.font = '15px Arial';
+   game.paths.forEach(function(path) {
+      const x = TILE_DIM*Math.round(path.start.x + path.end.x)/2;
+      const y = TILE_DIM*Math.round(path.start.y + path.end.y)/2;
+
+      let txt = `p${path.id}`;
+      console.log('filling ')
+
+      ctx.fillText(txt, x,y);
+   });
+}
+
    
 function debugTile(x, y, c_idx) {
     let color = TILE_COLORS[c_idx]

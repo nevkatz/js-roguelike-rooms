@@ -254,6 +254,7 @@ function startGame() {
       drawMap(0, 0, COLS, ROWS);
       updateStats();
        labelRooms();
+       labelPaths();
    }
 
 }

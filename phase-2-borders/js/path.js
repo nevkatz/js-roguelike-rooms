@@ -16,11 +16,15 @@ class Path {
       this.doorTop = doorTop;
       this.doorBot = doorBot;
 
+      this.id = game.curPathId;
+      game.curPathId++;
+
       this.floorSpan= 2;
 
       this.allowed = false;
 
       this.type = type;
+      this.neighbors = [];
 
    }
 }
@@ -327,4 +331,16 @@ Path.prototype.overlaps = function() {
 
    }
    return false;
+}
+/* needed? */
+Path.prototype.searchNeighbors = function(reachable=[]) {
+   for (let neighbor of this.neighbors) {
+    
+      if (!reachable.includes(neighbor)) {
+
+         reachable.push(neighbor);
+         reachable = neighbor.searchNeighbors(reachable);
+      } 
+   }
+   return reachable;
 }
