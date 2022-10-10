@@ -194,18 +194,21 @@ function fillEnclosed() {
          if (game.map[y][x] == EMPTY_CODE &&
              isEnclosed({x,y})) {
 
-            if (game.map[y-1][x] != EMPTY_CODE &&
-                 game.map[y][x-1] != EMPTY_CODE) {
+            const tileAbove = game.map[y-1][x];
+            const tileLeft = game.map[y][x-1];
+            // if no neighboring tiles are empty...
+            if (tileAbove != EMPTY_CODE &&
+                 tileLeft != EMPTY_CODE) {
 
-                 game.map[y][x] = FLOOR_CODE;
+                 game.map[y][x] = (tileAbove == BORDER_CODE) ? WALL_CODE : FLOOR_CODE;
             }
             else {
-            debugTile(x,y,POTION_CODE);
-              if (game.map[y-1][x] == FLOOR_CODE) {
-                 fill(x,y-1,FLOOR_CODE,EMPTY_CODE)
+              const oldCodes = [FLOOR_CODE,WALL_CODE];
+              if (game.map[y-1][x] == EMPTY_CODE) {
+                 fill(x,y-1,oldCodes,EMPTY_CODE)
               }
-              if (game.map[y][x-1] == FLOOR_CODE) {
-                 fill(x-1,y,FLOOR_CODE,EMPTY_CODE);
+              if (game.map[y][x-1] == EMPTY_CODE) {
+                 fill(x-1,y,oldCodes,EMPTY_CODE);
               }
             }
           
@@ -215,7 +218,7 @@ function fillEnclosed() {
    } // end outer loop
    //fillMore(OUTER_LIMIT,OUTER_LIMIT,BORDER_CODE,EMPTY_CODE);
 }
-function fill(x,y,oldCode,newCode) {
+function fill(x,y,oldCodes,newCode) {
    console.log(`fill: ${x},${y}`);
    game.map[y][x] = newCode;
 
@@ -233,37 +236,14 @@ function fill(x,y,oldCode,newCode) {
          const {x,y} = point;
          let tileCode = game.map[y][x];
 
-         if (tileCode == oldCode) {
-            fill(x,y,oldCode,newCode);
-            debugTile(x,y,WEAPON_CODE);
+         if (oldCodes.includes(tileCode)) {
+            fill(x,y,oldCodes,newCode);
+            //debugTile(x,y,WEAPON_CODE);
          }
      
    }
 }
-/*function fillMore(x,y,stopCode,newCode) {
-   console.log(`fill: ${x},${y}`);
-   game.map[y][x] = newCode;
 
-   let left = {x:x-1,y};
-   let top = {x,y:y-1};
-   let right = {x:x+1,y};
-   let bot = {x,y:y+1};
-
-   let arr = [top,left,right,bot];
-
-   for (let point of arr) {
-         const {x,y} = point;
-         if (game.map[y] && game.map[y][x]) {
-             let tileCode = game.map[y][x];
-
-             if (tileCode == FLOOR_CODE || tileCode == EMPTY_CODE) {
-              fillMore(x,y,stopCode,newCode);
-             // debugTile(x,y,WEAPON_CODE);
-              }
-
-         }
-   }
-}*/
 function isEnclosed(p){
 
    let rightBorderX = null;
@@ -386,12 +366,13 @@ function isEnclosed(p){
 
         }
         const eraseCheck =(x,y,tileCode) => {
+           const oldCodes = [FLOOR_CODE,WALL_CODE];
 
           if (game.map[y][x] == FLOOR_CODE) {
              console.log('about to start fill process');
-             fill(x,y,FLOOR_CODE,EMPTY_CODE);
+             fill(x,y,oldCodes,EMPTY_CODE);
 
-             debugTile(x,y,tileCode);
+            // debugTile(x,y,tileCode);
           }
         }
 
