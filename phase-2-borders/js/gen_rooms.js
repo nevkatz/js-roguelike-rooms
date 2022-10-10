@@ -61,7 +61,7 @@ function generateMapRooms() {
 
      console.log(`Room${myRoom.id} connected ${numConnected} out of ${numDisc} disconnected rooms`);
    }
-   fillEnclosed();
+   scanTiles();
 }
 
 /**
@@ -187,40 +187,52 @@ function genDim() {
    };
 };
 
-function fillEnclosed() {
+function scanTiles() {
    for (let y = OUTER_LIMIT; y < ROWS - OUTER_LIMIT; ++y) {
       for (let x = OUTER_LIMIT; x < COLS - OUTER_LIMIT; ++x) {
 
-         if (game.map[y][x] == EMPTY_CODE &&
-             isEnclosed({x,y})) {
-
-            const tileAbove = game.map[y-1][x];
-            const tileLeft = game.map[y][x-1];
-            // if no neighboring tiles are empty...
-            if (tileAbove != EMPTY_CODE &&
-                 tileLeft != EMPTY_CODE) {
-
-                 game.map[y][x] = (tileAbove == BORDER_CODE) ? WALL_CODE : FLOOR_CODE;
-            }
-            else {
-              backFill(x,y);
-            }
-          
-         }
+          checkEnclosed(x,y);
+          checkTopBorder(x,y);
 
       } // end inner loop
    } // end outer loop
    //fillMore(OUTER_LIMIT,OUTER_LIMIT,BORDER_CODE,EMPTY_CODE);
 }
-function backFill(x,y) {
-   const oldCodes = [FLOOR_CODE,WALL_CODE];
+function checkTopBorder(x,y) {
+   console.log(`checkTopBorder at ${x},${y}`);
+   if (game.map && game.map[y][x] == DOOR_CODE &&
+      game.map[y-1][x] == FLOOR_CODE &&
+      game.map[y+1][x] == FLOOR_CODE) {
+
+      game.map[y][x] = BLOCK_CODE;
+   }
+}
+function checkEnclosed(x,y) {
+   if (game.map[y][x] == EMPTY_CODE &&
+         isEnclosed({x,y})) {
+
+         const tileAbove = game.map[y-1][x];
+         const tileLeft = game.map[y][x-1];
+            // if no neighboring tiles are empty...
+         if (tileAbove != EMPTY_CODE &&
+                 tileLeft != EMPTY_CODE) {
+
+                 game.map[y][x] = SOLID_CODE; //(tileAbove == BORDER_CODE) ? WALL_CODE : FLOOR_CODE;
+         }
+         else {
+              backFillEmpty(x,y);
+         }
+          
+   }
+}
+function backFillEmpty(x,y) {
+
    if (game.map[y-1][x] == EMPTY_CODE) {
-         fill(x,y-1,oldCodes,EMPTY_CODE)
+         fillEmpty(x,y-1)
    }
    if (game.map[y][x-1] == EMPTY_CODE) {
-         fill(x-1,y,oldCodes,EMPTY_CODE);
+         fillEmpty(x-1,y);
    }
-
 }
 function fill(x,y,oldCodes,newCode) {
    console.log(`fill: ${x},${y}`);
@@ -247,7 +259,32 @@ function fill(x,y,oldCodes,newCode) {
      
    }
 }
+function fillEmpty(x,y) {
+   console.log(`fill: ${x},${y}`);
+   const oldCodes = [FLOOR_CODE,WALL_CODE,SOLID_CODE]
+   game.map[y][x] = EMPTY_CODE;
 
+   let left = {x:x-1,y};
+
+   let top = {x,y:y-1};
+
+   let right = {x:x+1,y};
+
+   let bot = {x,y:y+1};
+
+   let arr = [bot,right,top,left];
+
+   for (let point of arr) {
+         const {x,y} = point;
+         let tileCode = game.map[y][x];
+
+         if (oldCodes.includes(tileCode)) {
+            fillEmpty(x,y);
+            //debugTile(x,y,WEAPON_CODE);
+         }
+     
+   }
+}
 function isEnclosed(p){
 
    let rightBorderX = null;
@@ -370,11 +407,11 @@ function isEnclosed(p){
 
         }
         const eraseCheck =(x,y,tileCode) => {
-           const oldCodes = [FLOOR_CODE,WALL_CODE];
-
-          if (game.map[y][x] == FLOOR_CODE) {
+       
+         const oldCodes = [FLOOR_CODE,WALL_CODE,SOLID_CODE]
+          if (oldCodes.includes(game.map[y][x])) {
              console.log('about to start fill process');
-             fill(x,y,oldCodes,EMPTY_CODE);
+             fillEmpty(x,y);
 
             // debugTile(x,y,tileCode);
           }

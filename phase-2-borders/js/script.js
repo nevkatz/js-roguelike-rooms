@@ -59,7 +59,7 @@ const STARTING_WEAPONS_AMOUNT = 10;
 
 const TILE_COLORS = [
    // wall
-   'lightgrey',
+   '#ccc',
    // floor
    'white',
    // player
@@ -81,7 +81,7 @@ const TILE_COLORS = [
    // relic
    'dodgerblue',
    //
-   'pink'
+   '#e4e4e4'
 ];
 
 

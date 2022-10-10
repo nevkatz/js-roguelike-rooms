@@ -220,6 +220,7 @@ Path.prototype.addHorizBorder = function() {
    }*/
 
    if (this.end.corner == CORNER_TOP) {
+      debugTile(afterX,top,ENEMY_CODE);
       this.addBorder(afterX,top);
    }
    /**
@@ -232,6 +233,7 @@ Path.prototype.addHorizBorder = function() {
     */ 
    if (this.end.corner == CORNER_BOT) {
       this.addBorder(afterX,bot);
+      debugTile(afterX,top,POTION_CODE);
    }
 
 };
