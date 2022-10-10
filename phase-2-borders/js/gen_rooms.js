@@ -195,12 +195,22 @@ function fillEnclosed() {
              isEnclosed({x,y})) {
 
             if (game.map[y-1][x] != EMPTY_CODE &&
-               game.map[y][x-1] != EMPTY_CODE) {
+                 game.map[y][x-1] != EMPTY_CODE) {
 
                  game.map[y][x] = FLOOR_CODE;
             }
+            else {
+            debugTile(x,y,POTION_CODE);
+              if (game.map[y-1][x] == FLOOR_CODE) {
+                 fill(x,y-1,FLOOR_CODE,EMPTY_CODE)
+              }
+              if (game.map[y][x-1] == FLOOR_CODE) {
+                 fill(x-1,y,FLOOR_CODE,EMPTY_CODE);
+              }
+            }
           
          }
+
       } // end inner loop
    } // end outer loop
    //fillMore(OUTER_LIMIT,OUTER_LIMIT,BORDER_CODE,EMPTY_CODE);
