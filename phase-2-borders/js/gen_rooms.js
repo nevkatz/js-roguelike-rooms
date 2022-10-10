@@ -201,10 +201,36 @@ function fillEnclosed() {
             }
           
          }
-      }
-   }
+      } // end inner loop
+   } // end outer loop
+   //fillMore(OUTER_LIMIT,OUTER_LIMIT,BORDER_CODE,EMPTY_CODE);
 }
 function fill(x,y,oldCode,newCode) {
+   console.log(`fill: ${x},${y}`);
+   game.map[y][x] = newCode;
+
+   let left = {x:x-1,y};
+
+   let top = {x,y:y-1};
+
+   let right = {x:x+1,y};
+
+   let bot = {x,y:y+1};
+
+   let arr = [bot,right,top,left];
+
+   for (let point of arr) {
+         const {x,y} = point;
+         let tileCode = game.map[y][x];
+
+         if (tileCode == oldCode) {
+            fill(x,y,oldCode,newCode);
+            debugTile(x,y,WEAPON_CODE);
+         }
+     
+   }
+}
+/*function fillMore(x,y,stopCode,newCode) {
    console.log(`fill: ${x},${y}`);
    game.map[y][x] = newCode;
 
@@ -217,14 +243,17 @@ function fill(x,y,oldCode,newCode) {
 
    for (let point of arr) {
          const {x,y} = point;
-         let tileCode = game.map[y][x];
+         if (game.map[y] && game.map[y][x]) {
+             let tileCode = game.map[y][x];
 
-         if (tileCode == oldCode) {
-            fill(x,y,oldCode,newCode);
+             if (tileCode == FLOOR_CODE || tileCode == EMPTY_CODE) {
+              fillMore(x,y,stopCode,newCode);
+             // debugTile(x,y,WEAPON_CODE);
+              }
+
          }
-     
    }
-}
+}*/
 function isEnclosed(p){
 
    let rightBorderX = null;
@@ -232,8 +261,22 @@ function isEnclosed(p){
    if (game.map[p.y][p.x] == EMPTY_CODE) {
 
         const borderLeft = (x,y)=>{
-         console.log(`[borderLeft] x: ${x} y: ${y}`);
-         return x > game.map[y].indexOf(BORDER_CODE);
+         //console.log(`[borderLeft] x: ${x} y: ${y}`);
+         if (x > game.map[y].indexOf(BORDER_CODE)) {
+             let tileCode = game.map[y][x];
+
+             for (dx = x-1; dx > OUTER_LIMIT; --dx) {
+               if (game.map[y][dx] == BORDER_CODE) {
+                  return true;
+               }
+               else if (game.map[y][dx] != FLOOR_CODE) {
+                  return false;
+               }
+             }
+         }
+         return false;
+
+        
         }
         // is there a border tile directly above? 
         const hasBorderAtX = (row,x) => {
@@ -327,11 +370,13 @@ function isEnclosed(p){
         };
         const tryErase =(p) => {
           eraseCheck(p.x-1,p.y, ENEMY_CODE);
+          eraseCheck(p.x+1,p.y, ENEMY_CODE);
           eraseCheck(p.x,p.y-1, RELIC_CODE);
+          eraseCheck(p.x,p.y+1, RELIC_CODE);
 
         }
         const eraseCheck =(x,y,tileCode) => {
-         console.log('erase check');
+
           if (game.map[y][x] == FLOOR_CODE) {
              console.log('about to start fill process');
              fill(x,y,FLOOR_CODE,EMPTY_CODE);
@@ -346,7 +391,11 @@ function isEnclosed(p){
                checkAbove();
 
         if (!clear) {
+         //  debugTile(p.x,p.y,KEY_CODE);
            tryErase(p);
+        }
+        else {
+         // debugTile(p.x,p.y,POTION_CODE);
         }
         return clear;
 
