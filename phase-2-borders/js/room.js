@@ -126,11 +126,6 @@ Room.prototype.findFacingPaths = function(min=1, maxRooms=1) {
           if (success) {
             console.log(`${this.id} successfully connected with path ${path.id}`);
             this.paths.push(path);
-            debugTile(path.start.x,path.start.y,BLOCK_CODE)
-            debugTile(path.start.x,path.end.y,BLOCK_CODE);;
-
-            debugTile(path.end.x,path.start.y,BLOCK_CODE);
-            debugTile(path.end.x,path.end.y,BLOCK_CODE);
 
           }
 

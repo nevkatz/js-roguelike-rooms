@@ -24,7 +24,6 @@ class Path {
       this.allowed = false;
 
       this.type = type;
-      this.neighbors = [];
 
    }
 }

@@ -64,11 +64,15 @@ canvas#debug {
      border-radius: 4px;
      -webkit-appearance: none;
 }
- button.toggle {
+button.export,
+button.toggle {
      color: #fff;
      background-color: #5cb85c;
      border-color: #4cae4c;
+     margin: 10px auto;
+     display: block;
 }
+button.export:hover,
  button.toggle:hover {
      color: #fff;
      background-color: #47a447;

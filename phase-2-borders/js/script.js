@@ -206,12 +206,13 @@ function createDOM() {
 
    // create the button
    let btn = document.createElement('button');
-   btn.className = 'toggle';
-   btn.textContent = 'Toggle Shadow';
+   btn.className = 'export';
+   btn.textContent = 'Export Map';
 
-   container.appendChild(btn);
+   let controls = document.getElementById('controls');
+   controls.appendChild(btn);
 
-   btn.addEventListener('click', toggleShadow);
+   btn.addEventListener('click', utils.fm.exportMap);
 }
 
 function toggleShadow() {
