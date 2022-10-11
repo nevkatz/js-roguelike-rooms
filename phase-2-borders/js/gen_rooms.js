@@ -20,6 +20,7 @@ function generateMapRooms() {
    debugLine(xDiv,0, xDiv,ROWS);
    //horiz
    debugLine(0,yDiv,COLS,yDiv);
+
    let counter = 0;
    while (game.rooms.length < maxRooms) {
 
@@ -238,6 +239,7 @@ function backFillEmpty(x,y) {
          fillEmpty(x-1,y);
    }
 }
+/*
 function fill(x,y,oldCodes,newCode) {
 
    game.map[y][x] = newCode;
@@ -258,11 +260,11 @@ function fill(x,y,oldCodes,newCode) {
 
          if (oldCodes.includes(tileCode)) {
             fill(x,y,oldCodes,newCode);
-            //debugTile(x,y,WEAPON_CODE);
+            debugTile(x,y,WEAPON_CODE);
          }
      
    }
-}
+}*/
 function fillEmpty(x,y) {
 
    const oldCodes = [FLOOR_CODE,WALL_CODE,SOLID_CODE]
@@ -284,7 +286,7 @@ function fillEmpty(x,y) {
 
          if (oldCodes.includes(tileCode)) {
             fillEmpty(x,y);
-            //debugTile(x,y,WEAPON_CODE);
+          //  debugTile(x,y,POTION_CODE);
          }
      
    }
@@ -416,7 +418,7 @@ function isEnclosed(p){
             // console.log('about to start fill process');
              fillEmpty(x,y);
 
-            // debugTile(x,y,tileCode);
+           //  debugTile(x,y,tileCode);
           }
         }
 
@@ -426,7 +428,7 @@ function isEnclosed(p){
                checkAbove();
 
         if (!clear) {
-         //  debugTile(p.x,p.y,KEY_CODE);
+          // debugTile(p.x,p.y,KEY_CODE);
            tryErase(p);
         }
         else {

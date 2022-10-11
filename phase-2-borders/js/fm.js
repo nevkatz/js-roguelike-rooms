@@ -36,6 +36,31 @@ utils.fm = {
         
         utils.fm.downloadFile(filename,text);
     },
+
+    importContents:function(str) {
+        console.log('str: ' + str);
+        let obj = JSON.parse(str);
+        game.reset();
+        startGame(obj);
+    },
+    importMap:function(e) {
+        var file = e.target.files[0];
+        if (!file) {
+                console.log('returning');
+                return;
+        }
+        console.log('listen for load');
+        var reader = new FileReader();
+          
+        reader.onload = function(e) {
+        var contents = e.target.result;
+        utils.fm.importContents(contents);
+        console.log(contents);
+
+        };
+        reader.readAsText(file);
+    },
+
     restoreMap:function() {
         /* this.numRows = this.map.grid.length;
          this.numCols = this.map.grid[0].length;

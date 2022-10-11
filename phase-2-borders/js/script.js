@@ -205,14 +205,28 @@ function createDOM() {
 
 
    // create the button
-   let btn = document.createElement('button');
-   btn.className = 'export';
-   btn.textContent = 'Export Map';
+   let exportBtn = document.createElement('button');
+   exportBtn.className = 'export';
+   exportBtn.textContent = 'Export Map';
+
+   exportBtn.addEventListener('click', utils.fm.exportMap);
+
+   let importBtn = document.createElement('input');
+   importBtn.className = 'import';
+   importBtn.id = 'file-input';
+   importBtn.value= 'Import Map';
+   importBtn.type = 'file';
 
    let controls = document.getElementById('controls');
-   controls.appendChild(btn);
+   controls.appendChild(exportBtn);
+   controls.appendChild(importBtn);
 
-   btn.addEventListener('click', utils.fm.exportMap);
+
+   importBtn.addEventListener('change',utils.fm.importMap,false);
+   importBtn.onclick = function() {
+        this.value = null;
+        console.log('setting value to null');
+    }
 }
 
 function toggleShadow() {
@@ -247,9 +261,18 @@ init();
  */
 
 
-function startGame() {
+function startGame(obj) {
 
-   generateMapRooms();
+   if (obj) {
+      let {map,rooms,paths} = obj;
+      game.map = map;
+      game.rooms = rooms;
+      game.paths = paths;
+   }
+   else {
+      generateMapRooms(); 
+   }
+
 
    setTimeout(gameSetUp, 1);
 

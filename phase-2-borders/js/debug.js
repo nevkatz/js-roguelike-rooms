@@ -8,6 +8,7 @@ function debugLine(x1,y1,x2,y2) {
  var ctx = c.getContext("2d");
  ctx.beginPath();
  ctx.strokeStyle = 'red';
+ ctx.lineWidth = 5;
  ctx.moveTo(x1*TILE_DIM, y1*TILE_DIM);
  ctx.lineTo(x2*TILE_DIM, y2*TILE_DIM);
 

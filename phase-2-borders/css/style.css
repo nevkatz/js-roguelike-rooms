@@ -64,13 +64,21 @@ canvas#debug {
      border-radius: 4px;
      -webkit-appearance: none;
 }
+div#controls{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 button.export,
 button.toggle {
      color: #fff;
      background-color: #5cb85c;
      border-color: #4cae4c;
-     margin: 10px auto;
-     display: block;
+}
+input.import {
+    background-color:  white;
+    font-size: 16px;
+    margin-top:  30px;
 }
 button.export:hover,
  button.toggle:hover {
